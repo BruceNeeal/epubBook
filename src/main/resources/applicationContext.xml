@@ -47,7 +47,7 @@
     <!-- 配置扫描器, 将mybatis接口实现加入到ioc容器中 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <!-- 扫描所有dao接口，加入到IOC -->
-        <property name="basePackage" value="com.nzy.crud.dao"></property>
+        <property name="basePackage" value="com.bruce.dao"></property>
     </bean>
 
     <!-- 事务控制, 配置事务管理器 -->
