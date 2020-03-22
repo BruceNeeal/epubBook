@@ -3,28 +3,22 @@
 
 <head>
     <meta charset="utf-8">
-    <script src="/epubBook/static/jszip.min.js"></script>
-    <script src="/epubBook/static/epub.js"></script>
+    <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
+    <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-<div id="area" style="overflow: auto;">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>欢迎使用云阅读平台</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6" id="page_nav_area">分页条</div>
+        <div class="col-lg-6" id="page_info_area">分页信息</div>
+    </div>
 </div>
-<button id="prev">上一页</button>
-<button id="next">下一页</button>
-<script>
-    var book = ePub("linuxessentials.epub", { restore: true });
-    var rendition = book.renderTo("area", { flow: "auto", width: 800, height: 400 });
-    var displayed = rendition.display();
-    var next = document.getElementById("next");
-    next.addEventListener("click", function () {
-        rendition.next();
-    }, false);
-
-    var prev = document.getElementById("prev");
-    prev.addEventListener("click", function () {
-        rendition.prev();
-    }, false);
-</script>
 </body>
 </html>

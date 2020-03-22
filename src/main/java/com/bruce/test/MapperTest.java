@@ -23,6 +23,6 @@ public class MapperTest {
     @Test
     public void testCRUD(){
         //书本级联查询测试
-        System.out.println(bookMapper.selectByPrimaryKeyWithType("9781119092063").getType().getTypename());
+        System.out.println(bookMapper.selectByPrimaryKeyWithType("9787547242421").getType().getTypename());
     }
 }
