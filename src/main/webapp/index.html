@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="/epubBook/static/jszip.min.js"></script>
+    <script src="/epubBook/static/epub.js"></script>
+</head>
+
+<body>
+<div id="area" style="overflow: auto;">
+</div>
+<button id="prev">上一页</button>
+<button id="next">下一页</button>
+<script>
+    var book = ePub("linuxessentials.epub", { restore: true });
+    var rendition = book.renderTo("area", { flow: "auto", width: 800, height: 400 });
+    var displayed = rendition.display();
+    var next = document.getElementById("next");
+    next.addEventListener("click", function () {
+        rendition.next();
+    }, false);
+
+    var prev = document.getElementById("prev");
+    prev.addEventListener("click", function () {
+        rendition.prev();
+    }, false);
+</script>
+</body>
+</html>
