@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <title>cloud read</title>
     <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
     <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
@@ -10,15 +11,131 @@
 
 <body>
 <div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1>欢迎使用云阅读平台</h1>
+    <div class="row" style="margin-top: 2px;">
+        <div class="col-md-6" style="font-size: 30px;">
+            <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
+                class="glyphicon glyphicon-book"></span>
+        </div>
+        <div class="col-md-6">
+            <ul class="nav nav-pills">
+                <li role="presentation" class="active"><a href="index.html">首页</a></li>
+                <li role="presentation"><a href="#">科学技术</a></li>
+                <li role="presentation"><a href="#">中国文学</a></li>
+                <li role="presentation"><a href="#">外国文学</a></li>
+            </ul>
         </div>
     </div>
+
+    <div class="row" id="allgoods"></div>
+
     <div class="row">
-        <div class="col-lg-6" id="page_nav_area">分页条</div>
-        <div class="col-lg-6" id="page_info_area">分页信息</div>
+        <div class="col-md-6" id="page_nav_area"></div>
+        <div class="col-md-6" id="page_info_area"
+             style="padding: 20px; font-size: 18px;"></div>
     </div>
 </div>
+<script type="text/javascript">
+    var totalRecord;
+    var currentPage;
+    $(function() {
+        to_page(1);
+    });
+    function to_page(pn) {
+        $.ajax({
+            url : "/epubBook/getbooks",
+            data : "pn=" + pn,
+            type : "GET",
+            success : function(result) {
+                //1.解析并显示商品数据
+                //build_all_books(result);
+                //2.解析并显示分页信息
+                build_page_info(result);
+                //3.解析显示分页条
+                build_page_nav(result);
+            }
+        });
+    }
+    function build_all_books(result) {
+        $("#allgoods").empty();
+        var goods = result.extend.pageInfo.list;
+        $.each(goods, function(index, item) {
+            var goodsa = $("<a></a>").prop("href",
+                "views/goodsDetail.jsp?goodsId=" + item.goodsId)
+                .addClass("goodsa");
+            var goodsimg = $("<img>").addClass("goodsimg").prop("src",
+                "${APP_PATH}/images/" + item.img).appendTo(goodsa);
+            var pname = $("<p></p>").append("name:" + item.goodsName)
+                .addClass("goodsp").appendTo(goodsa);
+            var pprice = $("<p></p>").append("price:" + item.price + "RMB")
+                .addClass("goodsp").appendTo(goodsa);
+            var owner = $("<p></p>").append("owner:" + item.email)
+                .addClass("goodsp").appendTo(goodsa);
+            var goodsdiv = $("<div></div>").addClass("goodsdiv").append(
+                goodsa).appendTo("#allgoods");
+        });
+    }
+    //解析显示分页信息
+    function build_page_info(result) {
+        //填充分页信息前先清空数据
+        $("#page_info_area").empty();
+        $("#page_info_area").append(
+            "当前" + result.extend.pageInfo.pageNum + "页,总"
+            + result.extend.pageInfo.pages + "页,总"
+            + result.extend.pageInfo.total + "条记录");
+        totalRecord = result.extend.pageInfo.total;
+        currentPage = result.extend.pageInfo.pageNum;
+    }
+    //解析显示分页条
+    function build_page_nav(result) {
+        //填充分页条前先清空数据
+        $("#page_nav_area").empty();
+        var ul = $("<ul></ul>").addClass("pagination")
+        var firstPageLi = $("<li></li>").append(
+            $("<a></a>").append("首页").attr("herf", "#"));
+        var prePageLi = $("<li></li>").append(
+            $("<a></a>").append("&laquo;"));
+        if (result.extend.pageInfo.hasPreviousPage == false) {
+            firstPageLi.addClass("disabled");
+            prePageLi.addClass("disabled");
+        } else {
+            firstPageLi.click(function() {
+                to_page(1);
+            });
+            prePageLi.click(function() {
+                to_page(result.extend.pageInfo.pageNum - 1);
+            });
+        }
+        ul.append(firstPageLi).append(prePageLi);
+        $.each(result.extend.pageInfo.navigatepageNums, function(index,
+                                                                 item) {
+            var numLi = $("<li></li>").append($("<a></a>").append(item));
+            if (result.extend.pageInfo.pageNum == item) {
+                numLi.addClass("active");
+            }
+            numLi.click(function() {
+                to_page(item);
+            });
+            ul.append(numLi);
+        });
+        var nextPageLi = $("<li></li>").append(
+            $("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append(
+            $("<a></a>").append("末页").attr("herf", "#"));
+        if (result.extend.pageInfo.hasNextPage == false) {
+            nextPageLi.addClass("disabled");
+            lastPageLi.addClass("disabled");
+        } else {
+            nextPageLi.click(function() {
+                to_page(result.extend.pageInfo.pageNum + 1);
+            });
+            lastPageLi.click(function() {
+                to_page(result.extend.pageInfo.pages);
+            });
+        }
+        ul.append(nextPageLi).append(lastPageLi);
+        var navEle = $("<nav></nav>").append(ul);
+        navEle.appendTo("#page_nav_area");
+    }
+</script>
 </body>
 </html>
