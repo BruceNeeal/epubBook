@@ -51,17 +51,17 @@
 
 <body>
 <div class="container">
-    <div class="row" style="margin-top: 2px;">
-        <div class="col-md-6" style="font-size: 30px;">
+    <div class="row" style="background: #c1e2b3">
+        <div class="col-md-6" style="font-size: 28px;">
             <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
                 class="glyphicon glyphicon-book"></span>
         </div>
         <div class="col-md-6">
             <ul class="nav nav-pills">
-                <li role="presentation" class="active"><a href="index.html">首页</a></li>
-                <li role="presentation"><a href="#">科学技术</a></li>
-                <li role="presentation"><a href="#">中国文学</a></li>
-                <li role="presentation"><a href="#">外国文学</a></li>
+                <li role="presentation" class="active"><a href="/epubBook/index.html">首页</a></li>
+                <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
+                <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
+                <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
             </ul>
         </div>
     </div>
@@ -100,7 +100,7 @@
         var books = result.extend.pageInfo.list;
         $.each(books, function(index, item) {
             var booksa = $("<a></a>").prop("href",
-                "views/readbook.html?bookid=" + item.bookid).addClass("booksa");
+                "/epubBook/views/readbook.html?bookid=" + item.bookid).addClass("booksa");
             // var booksimg = $("<img>").addClass("goodsimg").prop("src",
             //     "/epubBook/images/" + item.img).appendTo(booksa);
             var booktype = $("<p></p>").append(item.type.typename)
