@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>注册页</title>
+    <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
+    <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row" style="background: #c1e2b3">
+        <div class="col-md-6" style="font-size: 28px;">
+            <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
+                class="glyphicon glyphicon-book"></span>
+        </div>
+        <div class="col-md-6">
+            <ul class="nav nav-pills">
+                <li role="presentation"><a href="/epubBook/index.html">首页</a></li>
+                <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
+                <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
+                <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr style="margin: 2px;"/>
+
+    <div class="row" style="margin-top: 100px;">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group">
+                <label for="username" style="font-size: 22px;">用户名</label> <input
+                    type="email" class="form-control" id="username" style="font-size: 22px;">
+            </div>
+            <div class="form-group" style="font-size: 22px;">
+                <label for="password">密码</label> <input type="password"
+                                                        class="form-control" id="password" style="font-size: 22px;">
+            </div>
+            <button class="btn btn-warning btn-lg" id="regist">注册</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#regist").click(function () {
+        var username = $("#username").val();
+        var password = $("#password").val();
+        $.ajax({
+            url: "/epubBook/regist",
+            data: "username=" + username + "&password=" + password,
+            type: "POST",
+            success: function (result) {
+                if (result.code == 200) {
+                    alert(result.extend.wrong);
+                    location.reload();
+                } else {
+                    alert("注册成功");
+                    window.location.href = "/epubBook/views/login.html";
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
