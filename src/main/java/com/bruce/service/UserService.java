@@ -32,4 +32,11 @@ public class UserService {
         }
         else return list.get(0);
     }
+
+    public User findUserById(Integer userId){
+        return userMapper.selectByPrimaryKey(userId);
+    }
+    public void changepw(User user){
+        userMapper.updateByPrimaryKey(user);
+    }
 }

@@ -62,4 +62,22 @@ public class UserController {
         session.removeAttribute("userId");
         return Msg.success();
     }
+    @RequestMapping(value = "/changepw", method = RequestMethod.POST)
+    @ResponseBody
+    public Msg changepw(@RequestParam(value = "password1")String password1,
+                        @RequestParam(value = "password2")String password2, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Integer userId = null;
+        userId = (Integer) session.getAttribute("userId");
+        if (userId==null){
+            return Msg.fail().add("wrong","Please login!");
+        }else if (password1.trim().equals(password2.trim())==false){
+            return Msg.fail().add("wrong","Password is not the same");
+        }else {
+            User user = userService.findUserById(userId);
+            user.setPassword(password1.trim());
+            userService.changepw(user);
+            return Msg.success();
+        }
+    }
 }

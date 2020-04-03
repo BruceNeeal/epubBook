@@ -7,6 +7,6 @@ package com.bruce.test;
  */
 public class DailyTest {
     public static void main(String[] args) {
-
+        
     }
 }
