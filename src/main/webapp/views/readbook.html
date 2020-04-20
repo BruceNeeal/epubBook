@@ -9,32 +9,62 @@
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div id="area" style="overflow: auto;">
+<div class="container">
+    <div class="row">
+        <div class="col-md-1">
+            <button id="prevbtn" class="btn btn-default" style="font-size: large;">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </button>
+        </div>
+        <div id="area" style="overflow: auto;" class="col-md-10">
+        </div>
+        <div class="col-md-1">
+            <button id="nextbtn" class="btn btn-default" style="font-size: large">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+        </div>
+    </div>
 </div>
-<button id="prevbtn">上一页</button>
-<button id="nextbtn">下一页</button>
 <script type="text/javascript">
     var id;
-    $(function() {
+    $(function () {
         //根据id查找并渲染电子书
         id = UrlParam.paramValues("bookid");
-        var book = ePub("/epubBook/"+id+".epub", { restore: true });
-        var rendition = book.renderTo("area", { flow: "auto", width: "100%", height: 500 });
+        var book = ePub("/epubBook/" + id + ".epub", {restore: true});
+        var rendition = book.renderTo("area", {flow: "auto", width: "100%", height: "100%"});
         var displayed = rendition.display();
+        var bookpage = 1;
         var nextbtn = document.getElementById("nextbtn");
         nextbtn.addEventListener("click", function () {
             rendition.next();
+            if (bookpage>1){
+                bookpage--;
+            }
+            else bookpage = 1;
         }, false);
         var prevbtn = document.getElementById("prevbtn");
         prevbtn.addEventListener("click", function () {
             rendition.prev();
+            bookpage++;
         }, false);
-        setTimeout(()=>{
-            for (var i = 0; i < 20; i++) {
-                rendition.next();
-            }
-        },1000)
+        setInterval(() => {
+            //savepage(id,bookpage);
+            alert(bookpage);
+        }, 6000)
     });
+    function savepage(bookid,bookpage){
+        $.ajax({
+            url : "/epubBook/savepage",
+            data: "bookid=" + bookid + "&bookpage=" + bookpage,
+            type : "POST",
+            success : function(result) {
+                if (result.code==100){
+                    alert("save page automatically");
+                }
+                else alert("fail");
+            }
+        });
+    }
     UrlParam = function () { // url参数
         var data, index;
         (function init() {

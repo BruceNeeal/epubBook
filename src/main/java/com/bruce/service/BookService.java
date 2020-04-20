@@ -2,10 +2,12 @@ package com.bruce.service;
 
 import com.bruce.bean.Book;
 import com.bruce.bean.BookExample;
+import com.bruce.bean.Progress;
 import com.bruce.dao.BookMapper;
-import org.mybatis.generator.codegen.ibatis2.model.ExampleGenerator;
+import com.bruce.dao.ProgressMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ public class BookService {
 
     @Autowired
     BookMapper bookMapper;
+    @Autowired
+    ProgressMapper progressMapper;
 
     public List<Book> getAll(){
         return bookMapper.selectByExampleWithType(null);

@@ -1,6 +1,5 @@
 package com.bruce.test;
 
-import com.bruce.bean.Book;
 import com.bruce.dao.BookMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
