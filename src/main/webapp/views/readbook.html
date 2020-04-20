@@ -37,19 +37,17 @@
         var nextbtn = document.getElementById("nextbtn");
         nextbtn.addEventListener("click", function () {
             rendition.next();
-            if (bookpage>1){
-                bookpage--;
-            }
-            else bookpage = 1;
+            bookpage++;
         }, false);
         var prevbtn = document.getElementById("prevbtn");
         prevbtn.addEventListener("click", function () {
             rendition.prev();
-            bookpage++;
+            if (bookpage>1){
+                bookpage--;
+            }
         }, false);
         setInterval(() => {
-            //savepage(id,bookpage);
-            alert(bookpage);
+            savepage(id,bookpage);
         }, 6000)
     });
     function savepage(bookid,bookpage){
