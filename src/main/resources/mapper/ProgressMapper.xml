@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruce.dao.ProgressMapper">
+  <resultMap id="BaseResultMap" type="com.bruce.bean.Progress">
+    <id column="progressId" jdbcType="INTEGER" property="progressid" />
+    <result column="progressUserId" jdbcType="INTEGER" property="progressuserid" />
+    <result column="progressBookId" jdbcType="VARCHAR" property="progressbookid" />
+    <result column="page" jdbcType="INTEGER" property="page" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    progressId, progressUserId, progressBookId, page
+  </sql>
+  <select id="selectByExample" parameterType="com.bruce.bean.ProgressExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from progress
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from progress
+    where progressId = #{progressid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from progress
+    where progressId = #{progressid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.bruce.bean.ProgressExample">
+    delete from progress
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bruce.bean.Progress">
+    insert into progress (progressId, progressUserId, progressBookId, 
+      page)
+    values (#{progressid,jdbcType=INTEGER}, #{progressuserid,jdbcType=INTEGER}, #{progressbookid,jdbcType=VARCHAR}, 
+      #{page,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bruce.bean.Progress">
+    insert into progress
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="progressid != null">
+        progressId,
+      </if>
+      <if test="progressuserid != null">
+        progressUserId,
+      </if>
+      <if test="progressbookid != null">
+        progressBookId,
+      </if>
+      <if test="page != null">
+        page,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="progressid != null">
+        #{progressid,jdbcType=INTEGER},
+      </if>
+      <if test="progressuserid != null">
+        #{progressuserid,jdbcType=INTEGER},
+      </if>
+      <if test="progressbookid != null">
+        #{progressbookid,jdbcType=VARCHAR},
+      </if>
+      <if test="page != null">
+        #{page,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bruce.bean.ProgressExample" resultType="java.lang.Long">
+    select count(*) from progress
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update progress
+    <set>
+      <if test="record.progressid != null">
+        progressId = #{record.progressid,jdbcType=INTEGER},
+      </if>
+      <if test="record.progressuserid != null">
+        progressUserId = #{record.progressuserid,jdbcType=INTEGER},
+      </if>
+      <if test="record.progressbookid != null">
+        progressBookId = #{record.progressbookid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.page != null">
+        page = #{record.page,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update progress
+    set progressId = #{record.progressid,jdbcType=INTEGER},
+      progressUserId = #{record.progressuserid,jdbcType=INTEGER},
+      progressBookId = #{record.progressbookid,jdbcType=VARCHAR},
+      page = #{record.page,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bruce.bean.Progress">
+    update progress
+    <set>
+      <if test="progressuserid != null">
+        progressUserId = #{progressuserid,jdbcType=INTEGER},
+      </if>
+      <if test="progressbookid != null">
+        progressBookId = #{progressbookid,jdbcType=VARCHAR},
+      </if>
+      <if test="page != null">
+        page = #{page,jdbcType=INTEGER},
+      </if>
+    </set>
+    where progressId = #{progressid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bruce.bean.Progress">
+    update progress
+    set progressUserId = #{progressuserid,jdbcType=INTEGER},
+      progressBookId = #{progressbookid,jdbcType=VARCHAR},
+      page = #{page,jdbcType=INTEGER}
+    where progressId = #{progressid,jdbcType=INTEGER}
+  </update>
+</mapper>

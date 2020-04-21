@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruce.dao.PostMapper">
+  <resultMap id="BaseResultMap" type="com.bruce.bean.Post">
+    <id column="postId" jdbcType="INTEGER" property="postid" />
+    <result column="postTitle" jdbcType="VARCHAR" property="posttitle" />
+    <result column="postBody" jdbcType="VARCHAR" property="postbody" />
+    <result column="postUserId" jdbcType="INTEGER" property="postuserid" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    postId, postTitle, postBody, postUserId
+  </sql>
+  <select id="selectByExample" parameterType="com.bruce.bean.PostExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from post
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from post
+    where postId = #{postid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from post
+    where postId = #{postid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.bruce.bean.PostExample">
+    delete from post
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bruce.bean.Post">
+    insert into post (postId, postTitle, postBody, 
+      postUserId)
+    values (#{postid,jdbcType=INTEGER}, #{posttitle,jdbcType=VARCHAR}, #{postbody,jdbcType=VARCHAR}, 
+      #{postuserid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bruce.bean.Post">
+    insert into post
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="postid != null">
+        postId,
+      </if>
+      <if test="posttitle != null">
+        postTitle,
+      </if>
+      <if test="postbody != null">
+        postBody,
+      </if>
+      <if test="postuserid != null">
+        postUserId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="postid != null">
+        #{postid,jdbcType=INTEGER},
+      </if>
+      <if test="posttitle != null">
+        #{posttitle,jdbcType=VARCHAR},
+      </if>
+      <if test="postbody != null">
+        #{postbody,jdbcType=VARCHAR},
+      </if>
+      <if test="postuserid != null">
+        #{postuserid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bruce.bean.PostExample" resultType="java.lang.Long">
+    select count(*) from post
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update post
+    <set>
+      <if test="record.postid != null">
+        postId = #{record.postid,jdbcType=INTEGER},
+      </if>
+      <if test="record.posttitle != null">
+        postTitle = #{record.posttitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.postbody != null">
+        postBody = #{record.postbody,jdbcType=VARCHAR},
+      </if>
+      <if test="record.postuserid != null">
+        postUserId = #{record.postuserid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update post
+    set postId = #{record.postid,jdbcType=INTEGER},
+      postTitle = #{record.posttitle,jdbcType=VARCHAR},
+      postBody = #{record.postbody,jdbcType=VARCHAR},
+      postUserId = #{record.postuserid,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bruce.bean.Post">
+    update post
+    <set>
+      <if test="posttitle != null">
+        postTitle = #{posttitle,jdbcType=VARCHAR},
+      </if>
+      <if test="postbody != null">
+        postBody = #{postbody,jdbcType=VARCHAR},
+      </if>
+      <if test="postuserid != null">
+        postUserId = #{postuserid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where postId = #{postid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bruce.bean.Post">
+    update post
+    set postTitle = #{posttitle,jdbcType=VARCHAR},
+      postBody = #{postbody,jdbcType=VARCHAR},
+      postUserId = #{postuserid,jdbcType=INTEGER}
+    where postId = #{postid,jdbcType=INTEGER}
+  </update>
+</mapper>
