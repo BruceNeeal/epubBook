@@ -62,7 +62,7 @@
                 <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
                 <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
                 <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
-                <li role="presentation"><a href="/epubBook/views/login.html">登录</a></li>
+                <li role="presentation"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
                 <li role="presentation"><a href="/epubBook/views/changepw.html">修改密码</a></li>
             </ul>
         </div>
@@ -158,15 +158,15 @@
         ul.append(firstPageLi).append(prePageLi);
         $.each(result.extend.pageInfo.navigatepageNums,
             function (index, item) {
-            var numLi = $("<li></li>").append($("<a></a>").append(item));
-            if (result.extend.pageInfo.pageNum == item) {
-                numLi.addClass("active");
-            }
-            numLi.click(function () {
-                to_page(item);
+                var numLi = $("<li></li>").append($("<a></a>").append(item));
+                if (result.extend.pageInfo.pageNum == item) {
+                    numLi.addClass("active");
+                }
+                numLi.click(function () {
+                    to_page(item);
+                });
+                ul.append(numLi);
             });
-            ul.append(numLi);
-        });
         var nextPageLi = $("<li></li>").append(
             $("<a></a>").append("&raquo;"));
         var lastPageLi = $("<li></li>").append(

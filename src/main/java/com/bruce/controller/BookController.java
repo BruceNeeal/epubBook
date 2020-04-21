@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,32 +31,53 @@ public class BookController {
 
     @RequestMapping("/getbooks")
     @ResponseBody
-    public Msg getBooks(@RequestParam(value = "pn",defaultValue = "1")Integer pn){
-        PageHelper.startPage(pn,6);
+    public Msg getBooks(@RequestParam(value = "pn", defaultValue = "1") Integer pn) {
+        PageHelper.startPage(pn, 6);
         List<Book> books = bookService.getAll();
-        PageInfo page = new PageInfo(books,3);
-        return Msg.success().add("pageInfo",page);
+        PageInfo page = new PageInfo(books, 3);
+        return Msg.success().add("pageInfo", page);
+    }
+
+    @RequestMapping("/mybooks")
+    @ResponseBody
+    public Msg myBooks(@RequestParam(value = "pn", defaultValue = "1") Integer pn, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Integer userId = null;
+        userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return Msg.fail();
+        } else {
+            List<String> list = progressService.mybooksid(userId);
+            PageHelper.startPage(pn, 6);
+            List<Book> books = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                Book book = bookService.getBook(list.get(i));
+                books.add(book);
+            }
+            PageInfo page = new PageInfo(books, 3);
+            return Msg.success().add("pageInfo", page);
+        }
     }
 
     @RequestMapping("/getbookswithtype")
     @ResponseBody
-    public Msg getBooksWithType(@RequestParam(value = "pn",defaultValue = "1")Integer pn, @RequestParam(value = "typeid")Integer typeid){
-        PageHelper.startPage(pn,6);
+    public Msg getBooksWithType(@RequestParam(value = "pn", defaultValue = "1") Integer pn, @RequestParam(value = "typeid") Integer typeid) {
+        PageHelper.startPage(pn, 6);
         List<Book> books = bookService.getAllWithType(typeid);
-        PageInfo page = new PageInfo(books,3);
-        return Msg.success().add("pageInfo",page);
+        PageInfo page = new PageInfo(books, 3);
+        return Msg.success().add("pageInfo", page);
     }
 
     @RequestMapping(value = "/savepage", method = RequestMethod.POST)
     @ResponseBody
-    public Msg login(@RequestParam(value = "bookid")String bookid,
-                     @RequestParam(value = "bookpage")Integer bookpage, HttpServletRequest request){
+    public Msg login(@RequestParam(value = "bookid") String bookid,
+                     @RequestParam(value = "bookpage") Integer bookpage, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Integer userId = null;
         userId = (Integer) session.getAttribute("userId");
-        if (userId==null){
+        if (userId == null) {
             return Msg.fail();
-        }else {
+        } else {
             Progress progress = new Progress();
             progress.setPage(bookpage);
             progress.setProgressuserid(userId);
