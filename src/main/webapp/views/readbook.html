@@ -9,6 +9,18 @@
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div class="modal fade bs-example-modal-sm" id="savemodel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel">已自动保存进度</h4>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <div class="row">
         <div class="col-md-1">
@@ -42,27 +54,31 @@
         var prevbtn = document.getElementById("prevbtn");
         prevbtn.addEventListener("click", function () {
             rendition.prev();
-            if (bookpage>1){
+            if (bookpage > 1) {
                 bookpage--;
             }
         }, false);
         setInterval(() => {
-            savepage(id,bookpage);
-        }, 6000)
+            savepage(id, bookpage);
+        }, 60000)
     });
-    function savepage(bookid,bookpage){
+
+    function savepage(bookid, bookpage) {
         $.ajax({
-            url : "/epubBook/savepage",
+            url: "/epubBook/savepage",
             data: "bookid=" + bookid + "&bookpage=" + bookpage,
-            type : "POST",
-            success : function(result) {
-                if (result.code==100){
-                    alert("save page automatically");
+            type: "POST",
+            success: function (result) {
+                if (result.code == 100) {
+                    $("#savemodel").modal('show');
+                    setTimeout(()=>{
+                        $("#savemodel").modal('hide');
+                    },1000)
                 }
-                else alert("fail");
             }
         });
     }
+
     UrlParam = function () { // url参数
         var data, index;
         (function init() {
