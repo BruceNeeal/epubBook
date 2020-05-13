@@ -70,7 +70,7 @@ public class BookController {
 
     @RequestMapping(value = "/savepage", method = RequestMethod.POST)
     @ResponseBody
-    public Msg login(@RequestParam(value = "bookid") String bookid,
+    public Msg savepage(@RequestParam(value = "bookid") String bookid,
                      @RequestParam(value = "bookpage") Integer bookpage, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Integer userId = null;
@@ -84,6 +84,22 @@ public class BookController {
             progress.setProgressbookid(bookid);
             progressService.saveprogress(progress);
             return Msg.success();
+        }
+    }
+    @RequestMapping(value = "/getpage", method = RequestMethod.POST)
+    @ResponseBody
+    public Msg getpage(@RequestParam(value = "bookid") String bookid, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Integer userId = null;
+        userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return Msg.fail();
+        } else {
+            int page = progressService.getprogress(bookid,userId);
+            if (page==0){
+                return Msg.fail();
+            }
+            else return Msg.success().add("page",page);
         }
     }
 }

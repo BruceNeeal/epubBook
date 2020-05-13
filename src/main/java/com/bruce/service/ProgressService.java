@@ -40,4 +40,20 @@ public class ProgressService {
         }
         return list;
     }
+    public int getprogress(String bookid,Integer userid){
+        List<Progress> list;
+        ProgressExample pe = new ProgressExample();
+        ProgressExample.Criteria pc = pe.createCriteria();
+        pc.andProgressbookidEqualTo(bookid);
+        pc.andProgressuseridEqualTo(userid);
+        list = progressMapper.selectByExample(pe);
+        int page;
+        if (list.size()>0){
+            page = list.get(0).getPage();
+            return page;
+        }
+        else {
+            return 0;
+        }
+    }
 }
