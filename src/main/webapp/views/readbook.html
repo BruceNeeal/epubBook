@@ -21,6 +21,19 @@
         </div>
     </div>
 </div>
+<div class="modal fade bs-example-modal-sm" id="getmodel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="closeprogress" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel2">已查找到历史位置</h4>
+                <button id="toprogress" class="btn btn-default">确认跳转</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <div class="row">
         <div class="col-md-1">
@@ -39,31 +52,96 @@
 </div>
 <script type="text/javascript">
     var id;
+    var bookpage=0;
+    var book;
+    var rendition;
+    var locations=null;
     $(function () {
         //根据id查找并渲染电子书
         id = UrlParam.paramValues("bookid");
-        var book = ePub("/epubBook/" + id + ".epub", {restore: true});
-        var rendition = book.renderTo("area", {flow: "auto", width: "100%", height: "100%"});
-        var displayed = rendition.display();
-        var bookpage = 1;
+        book = ePub("/epubBook/" + id + ".epub", {restore: true});
+        rendition = book.renderTo("area", {flow: "auto", width: "100%", height: window.innerHeight});
+        rendition.display();
+        book.ready.then(()=>{
+            return book.locations.generate();
+        }).then(result=>{
+            locations=book.locations;
+        });
+        getpage(id);
+        // book.ready.then(()=>{
+        //     return book.locations.generate();
+        // }).then(result=>{
+        //     var locations=book.locations;
+        //     var percentage = bookpage/100;
+        //     var cfi = percentage>0?locations.cfiFromPercentage(percentage):0;
+        //     rendition.display(cfi);
+        //     setTimeout(()=>{
+        //         var currentLocation = rendition.currentLocation();
+        //         var progress = Math.round(((locations.percentageFromCfi(currentLocation.start.cfi)).toFixed(5))*100);
+        //         alert(progress);
+        //     },1)
+        // });
         var nextbtn = document.getElementById("nextbtn");
         nextbtn.addEventListener("click", function () {
             rendition.next();
-            bookpage++;
+            //bookpage++;
         }, false);
         var prevbtn = document.getElementById("prevbtn");
         prevbtn.addEventListener("click", function () {
             rendition.prev();
-            if (bookpage > 1) {
-                bookpage--;
-            }
+            // if (bookpage > 1) {
+            //     bookpage--;
+            // }
         }, false);
+        var toprogress = document.getElementById("toprogress");
+        toprogress.addEventListener("click",function () {
+            // var i=0;
+            // while(i<bookpage){
+            //     rendition.next();
+            //     i++;
+            // }
+            var percentage = bookpage/100;
+            var cfi = percentage>0?locations.cfiFromPercentage(percentage):0;
+            rendition.display(cfi);
+            $("#getmodel").modal('hide');
+        },false);
         setInterval(() => {
-            savepage(id, bookpage);
-        }, 9000)
+            var currentLocation = rendition.currentLocation();
+            var tmppage = Math.round(((locations.percentageFromCfi(currentLocation.start.cfi)).toFixed(5))*100);
+            if(tmppage>0){
+                bookpage=tmppage;
+            }
+            alert(bookpage);
+            //savepage(id,bookpage);
+        }, 6000)
     });
 
+    function getpage(bookid){
+        $.ajax({
+            url: "/epubBook/getpage",
+            data: "bookid=" + bookid,
+            type: "POST",
+            success: function (result) {
+                if (result.code == 100) {
+                    bookpage=result.extend.page;
+                    var t = 0;
+                    if (bookpage>0){
+                        setInterval(()=>{
+                            if (locations!=null&&t==0){
+                                t=1;
+                                $("#getmodel").modal('show');
+                            }
+                        },500)
+                    }
+                }
+            }
+        });
+    }
+
     function savepage(bookid, bookpage) {
+        if (bookpage<=0){
+            bookpage=0;
+        }
         $.ajax({
             url: "/epubBook/savepage",
             data: "bookid=" + bookid + "&bookpage=" + bookpage,
