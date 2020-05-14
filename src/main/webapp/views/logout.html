@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cloud read</title>
+    <meta charset="utf-8">
+    <title>cloud read</title>
+    <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+<a href="/epubBook/index.html"
+   style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%)">
+    正在注销,点此跳转主页</a>
+</body>
+<script type="text/javascript">
+    $(function () {
+        logout();
+    });
+    function logout() {
+        $.ajax({
+            url: "/epubBook/logout",
+            type: "GET",
+            success: function (result) {
+                if (result.code==100){
+                    setTimeout(()=>{
+                        window.location.href = "/epubBook/index.html";
+                    },2000)
+                }
+                else {
+                    window.location.href = "/epubBook/views/mydomain.html";
+                }
+            }
+        });
+    }
+</script>
+</html>

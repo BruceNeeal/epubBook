@@ -40,6 +40,19 @@ public class UserController {
         else return Msg.fail().add("wrong","Username has existed");
     }
 
+    @RequestMapping("/mydomain")
+    @ResponseBody
+    public Msg mydomain(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Integer userId = null;
+        userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return Msg.fail();
+        }else {
+            return Msg.success();
+        }
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Msg login(@RequestParam(value = "username")String username,

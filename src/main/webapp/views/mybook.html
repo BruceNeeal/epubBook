@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>cloud read</title>
@@ -49,7 +48,6 @@
         }
     </style>
 </head>
-
 <body>
 <div class="container">
     <div class="row" style="background: #c1e2b3">
@@ -59,15 +57,18 @@
         </div>
         <div class="col-md-6">
             <ul class="nav nav-pills">
-                <li role="presentation" class="active"><a href="/epubBook/index.html">首页</a></li>
+                <li role="presentation"><a href="/epubBook/index.html">首页</a></li>
                 <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
                 <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
                 <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
-                <li role="presentation"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
+                <li role="presentation"  class="active"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
             </ul>
         </div>
     </div>
-
+    <hr style="margin: 2px;"/>
+    <div class="row">
+        <p style="font-size: large">我已读过的书</p>
+    </div>
     <div class="row" id="allbooks"></div>
 
     <div class="row">
@@ -85,16 +86,21 @@
 
     function to_page(pn) {
         $.ajax({
-            url: "/epubBook/getbooks",
+            url: "/epubBook/mybooks",
             data: "pn=" + pn,
             type: "GET",
             success: function (result) {
-                //1.解析并显示书籍
-                build_all_books(result);
-                //2.解析并显示分页信息
-                build_page_info(result);
-                //3.解析显示分页条
-                build_page_nav(result);
+                if (result.code==200){
+                    window.location.href = "/epubBook/views/login.html";
+                }
+                else {
+                    //1.解析并显示书籍
+                    build_all_books(result);
+                    //2.解析并显示分页信息
+                    build_page_info(result);
+                    //3.解析显示分页条
+                    build_page_nav(result);
+                }
             }
         });
     }

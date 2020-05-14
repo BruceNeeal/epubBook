@@ -68,6 +68,7 @@
             locations=book.locations;
         });
         getpage(id);
+        var t = 0;
         // book.ready.then(()=>{
         //     return book.locations.generate();
         // }).then(result=>{
@@ -111,9 +112,8 @@
             if(tmppage>0){
                 bookpage=tmppage;
             }
-            alert(bookpage);
-            //savepage(id,bookpage);
-        }, 6000)
+            savepage(id,bookpage);
+        }, 60000)
     });
 
     function getpage(bookid){
@@ -131,7 +131,7 @@
                                 t=1;
                                 $("#getmodel").modal('show');
                             }
-                        },500)
+                        },1000)
                     }
                 }
             }
