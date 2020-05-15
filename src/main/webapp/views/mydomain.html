@@ -23,45 +23,6 @@
         .fourdivmid:hover{
             box-shadow: 1px 1px 6px #215;
         }
-        .booksdiv {
-            height: 350px;
-            width: 250px;
-            float: left;
-            margin-left: 100px;
-            margin-bottom: 20px;
-            margin-top: 20px;
-            box-shadow: 1px 1px 2px #215;
-            overflow: auto;
-        }
-
-        .booksdiv:hover {
-            box-shadow: 2px 4px 6px #215;
-        }
-
-        .booksa {
-            text-decoration: none;
-            color: #000;
-        }
-
-        .booksa:hover {
-            text-decoration: none;
-            color: #000;
-        }
-
-        .booksimg {
-            width: 250px;
-            height: 250px;
-            padding: 5px;
-        }
-
-        .booksp {
-            margin: 0px;
-            padding-left: 5px;
-            font-size: 18px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
     </style>
 </head>
 <body>
@@ -82,14 +43,14 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6" style="padding-top: 20px">
-            <div class="fourdivmid" style="float: right;padding-right: 20px;">
+        <div class="col-md-6" style="padding-top: 20px;padding-right: 40px">
+            <div class="fourdivmid" style="float: right;">
                 <a href="/epubBook/views/mybook.html" style="text-decoration: none">
                     <div class="fourdivin">已读书籍</div>
                 </a>
             </div>
         </div>
-        <div class="col-md-6" style="padding-top: 20px">
+        <div class="col-md-6" style="padding-top: 20px;padding-left: 40px">
             <div class="fourdivmid">
                 <a href="#" style="text-decoration: none">
                     <div class="fourdivin">添加书籍</div>
@@ -98,17 +59,49 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6" style="padding-top: 20px">
-            <div class="fourdivmid" style="float: right;padding-right: 20px;">
+        <div class="col-md-6" style="padding-top: 20px;padding-right: 40px">
+            <div class="fourdivmid" style="float: right;">
+                <a href="#" style="text-decoration: none">
+                    <div class="fourdivin">我的笔记</div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-top: 20px;padding-left: 40px">
+            <div class="fourdivmid">
+                <a href="#" style="text-decoration: none">
+                    <div class="fourdivin">添加笔记</div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6" style="padding-top: 20px;padding-right: 40px">
+            <div class="fourdivmid" style="float: right;">
                 <a href="/epubBook/views/changepw.html" style="text-decoration: none">
                     <div class="fourdivin">修改密码</div>
                 </a>
             </div>
         </div>
-        <div class="col-md-6" style="padding-top: 20px">
+        <div class="col-md-6" style="padding-top: 20px;padding-left: 40px">
             <div class="fourdivmid">
                 <a href="/epubBook/views/logout.html" style="text-decoration: none">
                     <div class="fourdivin">用户注销</div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="colmd6left">
+            <div id="sixdivmidleft">
+                <a id="managebook">
+                    <div id="sixdivinleft"></div>
+                </a>
+            </div>
+        </div>
+        <div id="colmd6right">
+            <div id="sixdivmidright">
+                <a id="managepost">
+                    <div id="sixdivinright"></div>
                 </a>
             </div>
         </div>
@@ -124,6 +117,32 @@
             type: "GET",
             success: function (result) {
                 if (result.code!=100){
+                    window.location.href = "/epubBook/views/login.html";
+                }
+                else{
+                    checkStatus();
+                }
+            }
+        });
+    }
+    function checkStatus() {
+        $.ajax({
+            url: "/epubBook/getstatus",
+            type: "GET",
+            success: function (result) {
+                if (result.code==100) {
+                    if (result.extend.statusid == 1) {
+                        $("#colmd6left").addClass("col-md-6").css("padding-top", "20px").css("padding-right","40px");
+                        $("#sixdivmidleft").addClass("fourdivmid").css("float", "right");
+                        $("#managebook").prop("href", "/epubBook/index.html").css("text-decoration", "none");
+                        $("#sixdivinleft").addClass("fourdivin").text("书籍管理");
+                        $("#colmd6right").addClass("col-md-6").css("padding-top", "20px").css("padding-left","40px");
+                        $("#sixdivmidright").addClass("fourdivmid");
+                        $("#managepost").prop("href", "/epubBook/index.html").css("text-decoration", "none");
+                        $("#sixdivinright").addClass("fourdivin").text("笔记管理");
+                    }
+                }
+                else {
                     window.location.href = "/epubBook/views/login.html";
                 }
             }

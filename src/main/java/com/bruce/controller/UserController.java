@@ -53,6 +53,20 @@ public class UserController {
         }
     }
 
+    @RequestMapping("/getstatus")
+    @ResponseBody
+    public Msg getstatus(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Integer statusid =null;
+        statusid = (Integer) session.getAttribute("statusId");
+        if (statusid==null){
+            return Msg.fail();
+        }
+        else {
+            return Msg.success().add("statusid",statusid);
+        }
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Msg login(@RequestParam(value = "username")String username,
@@ -65,6 +79,7 @@ public class UserController {
         }else {
             HttpSession session = request.getSession();
             session.setAttribute("userId", user.getUserid());
+            session.setAttribute("statusId",user.getUserstatusid());
             return Msg.success();
         }
     }
