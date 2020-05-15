@@ -9,10 +9,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,5 +106,18 @@ public class BookController {
             }
             else return Msg.success().add("page",page);
         }
+    }
+
+    @RequestMapping("addbook")
+    public void addbook(@RequestParam(value = "imgfile") MultipartFile imgfile,@RequestParam(value = "bookfile") MultipartFile bookfile,HttpServletRequest request,HttpServletResponse response) throws IOException {
+        String filePath = request.getSession().getServletContext().getRealPath("/images/");
+        if (imgfile!=null&&!imgfile.isEmpty()) {
+            imgfile.transferTo(new File(filePath+"aaa.png"));
+            if (bookfile!=null&&!bookfile.isEmpty()) {
+                bookfile.transferTo(new File(filePath+"bbb.epub"));
+                response.sendRedirect("/epubBook/index.html");
+            }
+        }
+        else response.sendRedirect("/epubBook/views/mydomain.html");
     }
 }

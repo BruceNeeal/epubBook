@@ -35,4 +35,7 @@ public class BookService {
     public Book getBook(String s){
         return bookMapper.selectByPrimaryKeyWithType(s.trim());
     }
+    public void addbook(Book book){
+        bookMapper.insert(book);
+    }
 }

@@ -7,7 +7,7 @@ package com.bruce.test;
  * java8 dailyTest
  */
 public class DailyTest {
-    public static void main(String[] args) {
-        
+    public static void main(String[] args){
+
     }
 }
