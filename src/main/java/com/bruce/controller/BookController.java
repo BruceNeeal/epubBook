@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author bruce
@@ -109,14 +110,41 @@ public class BookController {
     }
 
     @RequestMapping("addbook")
-    public void addbook(@RequestParam(value = "imgfile") MultipartFile imgfile,@RequestParam(value = "bookfile") MultipartFile bookfile,HttpServletRequest request,HttpServletResponse response) throws IOException {
-        String filePath = request.getSession().getServletContext().getRealPath("/images/");
-        if (imgfile!=null&&!imgfile.isEmpty()) {
-            imgfile.transferTo(new File(filePath+"aaa.png"));
-            if (bookfile!=null&&!bookfile.isEmpty()) {
-                bookfile.transferTo(new File(filePath+"bbb.epub"));
-                response.sendRedirect("/epubBook/index.html");
+    public void addbook(@RequestParam(value = "bookid") String bookid,@RequestParam(value = "bookname") String bookname,
+                        @RequestParam(value = "author") String author,@RequestParam(value = "description") String description,
+
+            @RequestParam(value = "imgfile") MultipartFile imgfile,@RequestParam(value = "bookfile") MultipartFile bookfile,
+                        HttpServletRequest request,HttpServletResponse response) throws IOException {
+        Book book = new Book();
+        book.setBookid(bookid.trim());
+        book.setBookname(bookname.trim());
+        book.setAuthor(author.trim());
+        book.setDescription(description.trim());
+        //book.setBooktypeid(booktypeid);
+        String imgPath = request.getSession().getServletContext().getRealPath("/images/");
+        String bookPath = request.getSession().getServletContext().getRealPath("/books/");
+        String filename="";
+        String imgcontentType = imgfile.getContentType();
+        String bookcontentType = bookfile.getContentType();
+        String imgtype = "."+imgcontentType.substring(imgcontentType.indexOf("/")+1);
+        String booktype = "."+bookcontentType.substring(bookcontentType.indexOf("/")+1);
+        if (bookid==null||bookid.trim().equals("")){
+            if (bookname!=null){
+                filename+=bookname;
             }
+            filename+= UUID.randomUUID().toString().substring(0, 11);
+            book.setBookid(filename);
+        }
+        else {
+            filename=bookid.trim();
+        }
+        if (imgfile!=null&&!imgfile.isEmpty()) {
+            //imgfile.transferTo(new File(imgPath+filename+imgtype));
+        }
+        if (bookfile!=null&&!bookfile.isEmpty()) {
+            //bookfile.transferTo(new File(bookPath+filename+booktype));
+            bookService.addbook(book);
+            response.sendRedirect("/epubBook/index.html");
         }
         else response.sendRedirect("/epubBook/views/mydomain.html");
     }

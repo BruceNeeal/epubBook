@@ -59,7 +59,7 @@
     $(function () {
         //根据id查找并渲染电子书
         id = UrlParam.paramValues("bookid");
-        book = ePub("/epubBook/" + id + ".epub", {restore: true});
+        book = ePub("/epubBook/books/" + id + ".epub", {restore: true});
         rendition = book.renderTo("area", {flow: "auto", width: "100%", height: window.innerHeight});
         rendition.display();
         book.ready.then(()=>{
