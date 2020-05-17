@@ -8,44 +8,26 @@
     <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <style type="text/css">
-        .booksdiv {
-            height: 350px;
-            width: 250px;
-            float: left;
-            margin-left: 100px;
-            margin-bottom: 20px;
-            margin-top: 20px;
-            box-shadow: 1px 1px 2px #215;
-            overflow: auto;
+        .desc{
+            display: block;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-
-        .booksdiv:hover {
-            box-shadow: 2px 4px 6px #215;
-        }
-
         .booksa {
             text-decoration: none;
             color: #000;
         }
-
         .booksa:hover {
             text-decoration: none;
             color: #000;
         }
-
         .booksimg {
-            width: 250px;
-            height: 250px;
+            width: 150px;
+            height: 200px;
             padding: 5px;
-        }
-
-        .booksp {
-            margin: 0px;
-            padding-left: 5px;
-            font-size: 18px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
     </style>
 </head>
@@ -68,7 +50,26 @@
         </div>
     </div>
 
-    <div class="row" id="allbooks"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover table-striped" id="books_table">
+                <thead>
+                <tr>
+                    <th class="col-md-1">编号</th>
+                    <th class="col-md-2">图片</th>
+                    <th class="col-md-2">书名</th>
+                    <th class="col-md-2">作者</th>
+                    <th class="col-md-2">描述</th>
+                    <th class="col-md-1">类别</th>
+                    <th class="col-md-2">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-6" id="page_nav_area"></div>
@@ -100,26 +101,46 @@
     }
 
     function build_all_books(result) {
-        $("#allbooks").empty();
+        $("#books_table tbody").empty();
         var books = result.extend.pageInfo.list;
         $.each(books, function (index, item) {
             var booksa = $("<a></a>").prop("href",
                 "/epubBook/views/readbook.html?bookid=" + item.bookid).addClass("booksa");
+            var booksimg;
             if (item.img == null) {
-                var booksimg = $("<img>").addClass("booksimg").prop("src",
+                booksimg = $("<img>").addClass("booksimg").prop("src",
                     "/epubBook/images/imgdefault.png").appendTo(booksa);
             } else {
-                var booksimg = $("<img>").addClass("booksimg").prop("src",
+                booksimg = $("<img>").addClass("booksimg").prop("src",
                     "/epubBook/images/" + item.img).appendTo(booksa);
             }
-            var booktype = $("<p></p>").append(item.type.typename)
-                .addClass("booksp").appendTo(booksa);
-            var bookname = $("<p></p>").append(item.bookname)
-                .addClass("booksp").appendTo(booksa);
-            var author = $("<p></p>").append(item.author)
-                .addClass("booksp").appendTo(booksa);
-            var booksdiv = $("<div></div>").addClass("booksdiv").append(
-                booksa).appendTo("#allbooks");
+            var tdbookid = $("<td></td>").append(item.bookid);
+            var tdbookimg = $("<td></td>").append(booksa);
+            var pbookname = $("<p></p>").append(item.bookname).addClass("desc");
+            var tdbookname = $("<td></td>").append(pbookname);
+            var pauthor = $("<p></p>").append(item.author).addClass("desc");
+            var tdauthor = $("<td></td>").append(pauthor);
+            var pdescription = $("<p></p>").append(item.description).addClass("desc");
+            var tddescription = $("<td></td>").append(pdescription);
+            var tdbooktype = $("<td></td>").append(item.type.typename);
+            var editBtn = $("<button></button>").addClass(
+                "btn btn-primary btn-sm edit_btn").append(
+                $("<span></span>").addClass(
+                    "glyphicon glyphicon-pencil")).append("编辑");
+            //为编辑按钮添加一个自定义属性，来表示bookid
+            editBtn.attr("edit-id", item.bookid);
+            var delBtn = $("<button></button>").addClass(
+                "btn btn-danger btn-sm delete_btn").append(
+                $("<span></span>")
+                    .addClass("glyphicon glyphicon-trash")).append(
+                "删除");
+            //为删除按钮添加一个自定义属性，来表示bookid
+            delBtn.attr("del-id", item.bookid);
+            var btnTd = $("<td></td>").append(editBtn).append(" ").append(
+                delBtn);
+            $("<tr></tr>").append(tdbookid).append(tdbookimg).append(tdbookname).append(
+                tdauthor).append(tddescription).append(tdbooktype).append(
+                btnTd).appendTo("#books_table tbody");
         });
     }
 
