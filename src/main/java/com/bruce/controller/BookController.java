@@ -3,13 +3,14 @@ package com.bruce.controller;
 import com.bruce.bean.Book;
 import com.bruce.bean.Msg;
 import com.bruce.bean.Progress;
+import com.bruce.bean.Type;
 import com.bruce.service.BookService;
 import com.bruce.service.ProgressService;
+import com.bruce.service.TypeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,15 @@ public class BookController {
     BookService bookService;
     @Autowired
     ProgressService progressService;
+    @Autowired
+    TypeService typeService;
+
+    @RequestMapping("/getbooktype")
+    @ResponseBody
+    public Msg getbooktype(){
+        List<Type> types = typeService.getType();
+        return Msg.success().add("types",types);
+    }
 
     @RequestMapping("/getbooks")
     @ResponseBody
@@ -112,7 +122,7 @@ public class BookController {
     @RequestMapping("addbook")
     public void addbook(@RequestParam(value = "bookid") String bookid,@RequestParam(value = "bookname") String bookname,
                         @RequestParam(value = "author") String author,@RequestParam(value = "description") String description,
-
+            @RequestParam(value = "booktypeid") Integer booktypeid,
             @RequestParam(value = "imgfile") MultipartFile imgfile,@RequestParam(value = "bookfile") MultipartFile bookfile,
                         HttpServletRequest request,HttpServletResponse response) throws IOException {
         Book book = new Book();
@@ -120,7 +130,7 @@ public class BookController {
         book.setBookname(bookname.trim());
         book.setAuthor(author.trim());
         book.setDescription(description.trim());
-        //book.setBooktypeid(booktypeid);
+        book.setBooktypeid(booktypeid);
         String imgPath = request.getSession().getServletContext().getRealPath("/images/");
         String bookPath = request.getSession().getServletContext().getRealPath("/books/");
         String filename="";
@@ -139,10 +149,11 @@ public class BookController {
             filename=bookid.trim();
         }
         if (imgfile!=null&&!imgfile.isEmpty()) {
-            //imgfile.transferTo(new File(imgPath+filename+imgtype));
+            book.setImg(filename+imgtype);
+            imgfile.transferTo(new File(imgPath+filename+imgtype));
         }
         if (bookfile!=null&&!bookfile.isEmpty()) {
-            //bookfile.transferTo(new File(bookPath+filename+booktype));
+            bookfile.transferTo(new File(bookPath+filename+booktype));
             bookService.addbook(book);
             response.sendRedirect("/epubBook/index.html");
         }

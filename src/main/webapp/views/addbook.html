@@ -7,7 +7,11 @@
     <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <style type="text/css">
-
+        #addbookform{
+            box-shadow: 1px 1px 8px #215;
+            border-radius: 10px;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -28,63 +32,91 @@
         </div>
     </div>
 
-    <form class="form-horizontal" action="/epubBook/addbook"
-          method="post" enctype="multipart/form-data">
+    <form id="addbookform" class="form-horizontal" action="/epubBook/addbook"
+          method="post" enctype="multipart/form-data" style="margin-top: 20px;">
         <div class="form-group">
-            <label class="col-sm-2 control-label">ISBN</label>
-            <div class="col-sm-10">
+            <label class="col-md-1 control-label">ISBN</label>
+            <div class="col-md-10">
                 <input type="text" name="bookid" class="form-control"
                        id="bookid"> <span class="help-block"></span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">书名</label>
-            <div class="col-sm-10">
+            <label class="col-md-1 control-label">书名</label>
+            <div class="col-md-10">
                 <input type="text" name="bookname" class="form-control"
                        id="bookname"> <span class="help-block"></span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">作者</label>
-            <div class="col-sm-10">
+            <label class="col-md-1 control-label">作者</label>
+            <div class="col-md-10">
                 <input type="text" name="author" class="form-control"
                        id="author"> <span class="help-block"></span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">简述</label>
-            <div class="col-sm-10">
+            <label class="col-md-1 control-label">简述</label>
+            <div class="col-md-10">
                 <input type="text" name="description" class="form-control"
                        id="description"> <span class="help-block"></span>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">类别</label>
-            <div class="col-sm-6">
+        <div class="form-group" id="booktype">
+            <label class="col-md-1 control-label">类别</label>
+            <div class="col-md-10">
                 <select class="form-control" name="booktypeid"
-                        style="font-size: 18px;">
+                        style="font-size: 16px;">
                 </select>
+                <span class="help-block"></span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">图片上传</label>
-            <div class="col-sm-10">
+            <label class="col-md-1 control-label">图片上传</label>
+            <div class="col-md-10">
                 <input type="file" name="imgfile" class="form-control" id="imgfile">
                 <span class="help-block"></span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">书籍上传</label>
-            <div class="col-sm-10">
+            <label class="col-md-1 control-label">书籍上传</label>
+            <div class="col-md-10">
                 <input type="file" name="bookfile" class="form-control" id="bookfile">
                 <span class="help-block"></span>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">提交</button>
+        <div class="form-group">
+            <label class="col-md-1 control-label">选择</label>
+            <div class="col-md-10">
+                <button type="button" class="btn btn btn-warning" id="cancelbtn">取消</button>
+                <button type="submit" class="btn btn btn-success" style="margin-left: 20px">提交</button>
+            </div>
+        </div>
+
     </form>
 </div>
 <script type="text/javascript">
-
+    $(function(){
+        getTypes("#booktype select");
+        var cancelbtn = document.getElementById("cancelbtn");
+        cancelbtn.addEventListener("click", function () {
+            window.location.href = "/epubBook/views/mydomain.html";
+        }, false);
+    });
+    function getTypes(ele) {
+        $(ele).empty();
+        $.ajax({
+            url : "/epubBook/getbooktype",
+            type : "GET",
+            success : function(result) {
+                $.each(result.extend.types, function() {
+                    var optionEle = $("<option></option>").append(
+                        this.typename).attr("value", this.typeid);
+                    optionEle.appendTo(ele);
+                });
+            }
+        });
+    }
 </script>
 </body>
 </html>
