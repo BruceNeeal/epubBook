@@ -38,4 +38,11 @@ public class BookService {
     public void addbook(Book book){
         bookMapper.insert(book);
     }
+
+    public void deletebook(String bookid){
+        bookMapper.deleteByPrimaryKey(bookid);
+    }
+    public void updatebook(Book book){
+        bookMapper.updateByPrimaryKeySelective(book);
+    }
 }

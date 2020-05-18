@@ -119,7 +119,63 @@ public class BookController {
         }
     }
 
-    @RequestMapping("addbook")
+    @RequestMapping(value = "/deletebook",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg deletebook(@RequestParam(value = "bookid") String bookid,HttpServletRequest request){
+        String imgPath = request.getSession().getServletContext().getRealPath("/images/");
+        String bookPath = request.getSession().getServletContext().getRealPath("/books/");
+        File file = new File(bookPath+bookid+".epub");
+        Book book = bookService.getBook(bookid);
+        String imgname = book.getImg();
+        File imgfile = new File(imgPath+imgname);
+        if (file.exists()){
+            file.delete();
+            if (imgfile.exists()){
+                imgfile.delete();
+            }
+            bookService.deletebook(bookid);
+            return Msg.success();
+        }
+        else return Msg.fail();
+    }
+
+    @RequestMapping(value = "/updatebook/{id}",method = RequestMethod.POST)
+    public void updatebook(@PathVariable("id")String id,@RequestParam(value = "bookname") String bookname,
+                           @RequestParam(value = "author") String author, @RequestParam(value = "description") String description,
+                           @RequestParam(value = "imgfile") MultipartFile imgfile,
+                           @RequestParam(value = "booktypeid") Integer booktypeid,
+                           HttpServletRequest request,HttpServletResponse response) throws IOException {
+        Book old = bookService.getBook(id);
+        Book book = new Book();
+        book.setBookid(id);
+        book.setBookname(bookname);
+        book.setAuthor(author);
+        book.setDescription(description);
+        book.setBooktypeid(booktypeid);
+        String imgPath = request.getSession().getServletContext().getRealPath("/images/");
+        String imgcontentType = imgfile.getContentType();
+        String imgtype = "."+imgcontentType.substring(imgcontentType.indexOf("/")+1);
+        if (imgfile!=null&&!imgfile.isEmpty()) {
+            book.setImg(id+imgtype);
+            imgfile.transferTo(new File(imgPath+id+imgtype));
+        }
+        else {
+            book.setImg(old.getImg());
+        }
+        bookService.updatebook(book);
+        response.sendRedirect("/epubBook/views/mydomain.html");
+    }
+
+
+
+    @RequestMapping(value = "/getbookbyid",method = RequestMethod.GET)
+    @ResponseBody
+    public Msg getbookbyid(@RequestParam(value = "bookid") String bookid){
+        Book book = bookService.getBook(bookid);
+        return Msg.success().add("book",book);
+    }
+
+    @RequestMapping("/addbook")
     public void addbook(@RequestParam(value = "bookid") String bookid,@RequestParam(value = "bookname") String bookname,
                         @RequestParam(value = "author") String author,@RequestParam(value = "description") String description,
             @RequestParam(value = "booktypeid") Integer booktypeid,

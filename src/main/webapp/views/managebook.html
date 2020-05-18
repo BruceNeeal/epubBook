@@ -33,6 +33,63 @@
 </head>
 
 <body>
+<div class="modal fade" id="bookUpdateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">书籍信息修改</h4>
+            </div>
+            <div class="modal-body">
+                <form id="updatebookform" class="form-horizontal"
+                      method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">书名</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="bookname" class="form-control" id="bookname_update">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">作者</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="author" class="form-control" id="author_update">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">简述</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="description" class="form-control" id="description_update">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">图片</label>
+                        <div class="col-md-10">
+                            <input type="file" name="imgfile" class="form-control" id="imgfile">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">类别</label>
+                        <div class="col-sm-6">
+                            <!--部门提交部门id即可-->
+                            <select class="form-control" name="booktypeid">
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="book_update_btn">更新</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <div class="row" style="background: #c1e2b3">
         <div class="col-md-6" style="font-size: 28px;">
@@ -143,6 +200,85 @@
                 btnTd).appendTo("#books_table tbody");
         });
     }
+
+    function getTypes(ele) {
+        $(ele).empty();
+        $.ajax({
+            url : "/epubBook/getbooktype",
+            type : "GET",
+            success : function(result) {
+                $.each(result.extend.types, function() {
+                    var optionEle = $("<option></option>").append(
+                        this.typename).attr("value", this.typeid);
+                    optionEle.appendTo(ele);
+                });
+            }
+        });
+    }
+
+    function getbook(bookid) {
+        $.ajax({
+            url: "/epubBook/getbookbyid",
+            type: "GET",
+            data: "bookid=" + bookid,
+            success: function (result) {
+                var book = result.extend.book;
+                $("#bookname_update").val(book.bookname);
+                $("#author_update").val(book.author);
+                $("#description_update").val(book.description);
+                $("#bookUpdateModal select").val([book.booktypeid]);
+            }
+        });
+    }
+
+    //清空表单样式及内容
+    function reset_form(ele) {
+        $(ele)[0].reset();
+        $(ele).find("*").removeClass("has-error has-success");
+        $(ele).find(".help-block").text("");
+    }
+
+    var book_update_btn = document.getElementById("book_update_btn");
+    book_update_btn.addEventListener("click", function () {
+        document.getElementById("updatebookform").submit();
+    }, false);
+
+    //Jquery使用on为ajax请求刷出的编辑按钮绑定点击事件
+    $(document).on("click", ".edit_btn", function () {
+        //1.先清除模态框表单数据
+        reset_form("#bookUpdateModal form");
+        //2.查出员工信息,显示员工信息
+        getbook($(this).attr("edit-id"));
+        //3.查出部门信息,显示部门列表
+        getTypes("#bookUpdateModal select");
+        //4.把员工的id传递给模态框的更新按钮
+        var id = $(this).attr("edit-id");
+        document.getElementById("updatebookform").action = "/epubBook/updatebook/"+id;
+        $("#bookUpdateModal").modal({
+            backdrop: "static"
+        });
+    });
+
+    //Jquery使用on为ajax请求刷出的删除按钮绑定点击事件
+    $(document).on("click", ".delete_btn", function () {
+        //1.弹出确认是否删除对话框
+        var deleteid = $(this).attr("del-id");
+        if (confirm("确认删除[" + deleteid + "]吗?")) {
+            //确认发送ajax请求删除即可
+            $.ajax({
+                url: "/epubBook/deletebook",
+                data: "bookid=" + deleteid,
+                type: "POST",
+                success: function (result) {
+                    if (result.code==100){
+                        alert("删除成功");
+                    }
+                    else alert("删除失败");
+                    to_page(currentPage);
+                }
+            });
+        }
+    });
 
     //解析显示分页信息
     function build_page_info(result) {
