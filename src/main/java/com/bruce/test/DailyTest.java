@@ -1,7 +1,6 @@
 package com.bruce.test;
 
-
-import java.io.File;
+import java.util.Scanner;
 
 /**
  * @author bruce
