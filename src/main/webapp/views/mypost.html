@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>cloud read</title>
+    <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
+    <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .desc{
+            display: block;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .booksa {
+            text-decoration: none;
+            color: #000;
+        }
+        .booksa:hover {
+            text-decoration: none;
+            color: #000;
+        }
+        .booksimg {
+            width: 150px;
+            height: 200px;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="row" style="background: #c1e2b3">
+        <div class="col-md-6" style="font-size: 28px;">
+            <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
+                class="glyphicon glyphicon-book"></span>
+        </div>
+        <div class="col-md-6">
+            <ul class="nav nav-pills">
+                <li role="presentation"><a href="/epubBook/index.html">首页</a></li>
+                <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
+                <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
+                <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
+                <li role="presentation" class="active"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <p style="font-size: large">我的笔记</p>
+    </div>
+    <div class="row" id="allposts"></div>
+
+    <div class="row">
+        <div class="col-md-6" id="page_nav_area"></div>
+        <div class="col-md-6" id="page_info_area"
+             style="padding: 20px; font-size: 18px;"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var totalRecord;
+    var currentPage;
+    $(function () {
+        to_page(1);
+    });
+
+    function to_page(pn) {
+        $.ajax({
+            url: "/epubBook/myposts",
+            data: "pn=" + pn,
+            type: "GET",
+            success: function (result) {
+                if (result.code==200){
+                    window.location.href = "/epubBook/views/login.html";
+                }
+                else {
+                    //1.解析并显示书籍
+                    build_all_posts(result);
+                    //2.解析并显示分页信息
+                    build_page_info(result);
+                    //3.解析显示分页条
+                    build_page_nav(result);
+                }
+            }
+        });
+    }
+
+    function build_all_posts(result) {
+        var posts = result.extend.pageInfo.list;
+        $.each(posts, function (index, item) {
+            // var postsa = $("<a></a>").prop("href",
+            //     "/epubBook/views/readpost.html?postid=" + item.postid);
+            var divr = $("<div></div>").addClass("row");
+            var titel = $("<a></a>").append(item.posttitle).addClass("postlink").appendTo(divr);
+            titel.attr("postid",item.postid);
+            var allposts = $("#allposts");
+            divr.appendTo(allposts);
+        });
+    }
+
+    $(document).on("click", ".postlink", function () {
+        var postid = $(this).attr("postid");
+
+    });
+
+    //Jquery使用on为ajax请求刷出的编辑按钮绑定点击事件
+    $(document).on("click", ".edit_btn", function () {
+        //1.先清除模态框表单数据
+        reset_form("#bookUpdateModal form");
+        //2.查出员工信息,显示员工信息
+        getbook($(this).attr("edit-id"));
+        //3.查出部门信息,显示部门列表
+        getTypes("#bookUpdateModal select");
+        //4.把员工的id传递给模态框的更新按钮
+        var id = $(this).attr("edit-id");
+        document.getElementById("updatebookform").action = "/epubBook/updatebook/"+id;
+        $("#bookUpdateModal").modal({
+            backdrop: "static"
+        });
+    });
+
+    //Jquery使用on为ajax请求刷出的删除按钮绑定点击事件
+    $(document).on("click", ".delete_btn", function () {
+        //1.弹出确认是否删除对话框
+        var deleteid = $(this).attr("del-id");
+        if (confirm("确认删除[" + deleteid + "]吗?")) {
+            //确认发送ajax请求删除即可
+            $.ajax({
+                url: "/epubBook/deletebook",
+                data: "bookid=" + deleteid,
+                type: "POST",
+                success: function (result) {
+                    if (result.code==100){
+                        alert("删除成功");
+                    }
+                    else alert("删除失败");
+                    to_page(currentPage);
+                }
+            });
+        }
+    });
+
+    //解析显示分页信息
+    function build_page_info(result) {
+        //填充分页信息前先清空数据
+        $("#page_info_area").empty();
+        $("#page_info_area").append(
+            "当前" + result.extend.pageInfo.pageNum + "页,总"
+            + result.extend.pageInfo.pages + "页,总"
+            + result.extend.pageInfo.total + "条记录");
+        totalRecord = result.extend.pageInfo.total;
+        currentPage = result.extend.pageInfo.pageNum;
+    }
+
+    //解析显示分页条
+    function build_page_nav(result) {
+        //填充分页条前先清空数据
+        $("#page_nav_area").empty();
+        var ul = $("<ul></ul>").addClass("pagination")
+        var firstPageLi = $("<li></li>").append(
+            $("<a></a>").append("首页").attr("herf", "#"));
+        var prePageLi = $("<li></li>").append(
+            $("<a></a>").append("&laquo;"));
+        if (result.extend.pageInfo.hasPreviousPage == false) {
+            firstPageLi.addClass("disabled");
+            prePageLi.addClass("disabled");
+        } else {
+            firstPageLi.click(function () {
+                to_page(1);
+            });
+            prePageLi.click(function () {
+                to_page(result.extend.pageInfo.pageNum - 1);
+            });
+        }
+        ul.append(firstPageLi).append(prePageLi);
+        $.each(result.extend.pageInfo.navigatepageNums,
+            function (index, item) {
+                var numLi = $("<li></li>").append($("<a></a>").append(item));
+                if (result.extend.pageInfo.pageNum == item) {
+                    numLi.addClass("active");
+                }
+                numLi.click(function () {
+                    to_page(item);
+                });
+                ul.append(numLi);
+            });
+        var nextPageLi = $("<li></li>").append(
+            $("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append(
+            $("<a></a>").append("末页").attr("herf", "#"));
+        if (result.extend.pageInfo.hasNextPage == false) {
+            nextPageLi.addClass("disabled");
+            lastPageLi.addClass("disabled");
+        } else {
+            nextPageLi.click(function () {
+                to_page(result.extend.pageInfo.pageNum + 1);
+            });
+            lastPageLi.click(function () {
+                to_page(result.extend.pageInfo.pages);
+            });
+        }
+        ul.append(nextPageLi).append(lastPageLi);
+        var navEle = $("<nav></nav>").append(ul);
+        navEle.appendTo("#page_nav_area");
+    }
+</script>
+</body>
+</html>
