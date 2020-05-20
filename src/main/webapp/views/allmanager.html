@@ -8,40 +8,6 @@
     <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <style type="text/css">
-        .postb{
-            display: block;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .postlink {
-            text-decoration: none;
-            color: #000;
-        }
-        .postitem{
-            margin-top: 20px;
-            box-shadow: 0px 0px 3px #215;
-            border-radius: 5px;
-            padding: 10px;
-        }
-        .postitem:hover{
-            box-shadow: 0px 1px 6px #215;
-        }
-        .posttitle{
-            font-size: 18px;
-            font-weight: bold;
-            display: block;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .rightcol{
-            margin-top: 10px;
-        }
         .delete_btn{
             margin-left: 10px;
         }
@@ -49,6 +15,41 @@
 </head>
 
 <body>
+<!-- 管理员添加的模态框 -->
+<div class="modal fade" id="managerAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">管理员添加</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">username</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" id="username"
+                                   placeholder="username"> <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">password</label>
+                        <div class="col-sm-10">
+                            <input type="password" name="password" class="form-control" id="password"
+                                   placeholder="password"><span class="help-block"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="submitmanager">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
     <div class="row" style="background: #c1e2b3">
         <div class="col-md-6" style="font-size: 28px;">
@@ -68,26 +69,71 @@
     </div>
     <hr style="margin: 2px;"/>
     <div class="row">
-        <p style="font-size: large">我的笔记</p>
+        <p style="font-size: large">人员管理</p>
     </div>
-    <div class="row" id="allposts"></div>
+    <div class="row">
+        <div class="col-md-5">
+            <table class="table table-hover" id="manager_table">
+                <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>管理员账号</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <button id="addmanager" class="btn btn-default">添加管理员</button>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-6" id="page_nav_area"></div>
         <div class="col-md-6" id="page_info_area"
              style="padding: 20px; font-size: 18px;"></div>
     </div>
+
+
 </div>
 <script type="text/javascript">
     var totalRecord;
     var currentPage;
     $(function () {
         to_page(1);
+        var addmanager = document.getElementById("addmanager");
+        addmanager.addEventListener("click",function () {
+            reset_form("#managerAddModal form");
+            $("#managerAddModal").modal({
+                backdrop: "static"
+            });
+        },false);
+        var submitmanager = document.getElementById("submitmanager");
+        submitmanager.addEventListener("click",function () {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            $.ajax({
+                url: "/epubBook/addmanager",
+                data: "username=" + username+"&password="+password,
+                type: "POST",
+                success: function (result) {
+                    $("#managerAddModal").modal('hide');
+                    if (result.code==200){
+                        alert(result.extend.wrong);
+                    }
+                    else {
+                        to_page(currentPage);
+                    }
+                }
+            });
+        },false)
     });
 
     function to_page(pn) {
         $.ajax({
-            url: "/epubBook/myposts",
+            url: "/epubBook/allmanager",
             data: "pn=" + pn,
             type: "POST",
             success: function (result) {
@@ -95,8 +141,8 @@
                     window.location.href = "/epubBook/views/login.html";
                 }
                 else {
-                    //1.解析并显示帖子
-                    build_all_posts(result);
+                    //1.解析并显示管理员
+                    build_all_managers(result);
                     //2.解析并显示分页信息
                     build_page_info(result);
                     //3.解析显示分页条
@@ -106,55 +152,40 @@
         });
     }
 
-    function build_all_posts(result) {
-        $("#allposts").empty();
-        var posts = result.extend.pageInfo.list;
-        $.each(posts, function (index, item) {
-            var postsa = $("<a></a>").prop("href",
-                "/epubBook/views/readpost.html?postid=" + item.postid).addClass("postlink");
-            var divr = $("<div></div>").addClass("row postitem");
-            var leftcol = $("<div></div>").addClass("col-md-10");
-            var posttitle = $("<div></div>").append(item.posttitle).addClass("posttitle");
-            var postbody = $("<div></div>").append(item.postbody).addClass("postb");
-            posttitle.appendTo(leftcol);
-            postbody.appendTo(leftcol);
-            leftcol.appendTo(postsa);
-            var rightcol = $("<div></div>").addClass("col-md-2 rightcol");
-            var updatebtn = $("<button></button>").addClass(
-                "btn btn-primary btn-sm edit_btn").append(
-                $("<span></span>").addClass(
-                    "glyphicon glyphicon-pencil")).append("编辑");
-            updatebtn.attr("edit-id",item.postid);
-            var deletebtn = $("<button></button>").addClass(
+    function build_all_managers(result) {
+        $("#manager_table tbody").empty();
+        var managers = result.extend.pageInfo.list;
+        $.each(managers, function (index, item) {
+            var userid = $("<td></td>").append(item.userid);
+            var username = $("<td></td>").append(item.username);
+            var delBtn = $("<button></button>").addClass(
                 "btn btn-danger btn-sm delete_btn").append(
                 $("<span></span>")
                     .addClass("glyphicon glyphicon-trash")).append(
                 "删除");
-            deletebtn.attr("del-id",item.postid);
-            updatebtn.appendTo(rightcol);
-            deletebtn.appendTo(rightcol);
-            var allposts = $("#allposts");
-            postsa.appendTo(divr);
-            rightcol.appendTo(divr);
-            divr.appendTo(allposts);
+            //为删除按钮添加一个自定义属性，来表示员工id
+            delBtn.attr("del-id", item.userid);
+            //append方法执行完成以后还是返回原来的元素
+            $("<tr></tr>").append(userid).append(username).append(
+                delBtn).appendTo("#manager_table tbody");
         });
     }
 
-    //Jquery使用on为ajax请求刷出的编辑按钮绑定点击事件
-    $(document).on("click", ".edit_btn", function () {
-        var id = $(this).attr("edit-id");
-        window.location.href="/epubBook/views/updatepost.html?postid="+id;
-    });
+    function reset_form(ele) {
+        $(ele)[0].reset();
+        $(ele).find("*").removeClass("has-error has-success");
+        $(ele).find(".help-block").text("");
+    }
 
     //Jquery使用on为ajax请求刷出的删除按钮绑定点击事件
     $(document).on("click", ".delete_btn", function () {
         //1.弹出确认是否删除对话框
-        var postid = $(this).attr("del-id");
-        if (confirm("确认删除[" + postid + "]吗?")) {
+        var userid = $(this).attr("del-id");
+        if (confirm("确认删除[" + userid + "]吗?")) {
             //确认发送ajax请求删除即可
             $.ajax({
-                url: "/epubBook/deletepost",
-                data: "postid=" + postid,
+                url: "/epubBook/deletemanager",
+                data: "userid=" + userid,
                 type: "POST",
                 success: function (result) {
                     if (result.code==100){

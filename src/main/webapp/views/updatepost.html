@@ -11,9 +11,6 @@
             white-space:pre-wrap;
             font-size: 18px;
         }
-        .rrdiv{
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -30,49 +27,59 @@
                 <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
                 <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
                 <li role="presentation"><a href="/epubBook/views/allposts.html">读书笔记</a></li>
-                <li role="presentation"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
+                <li role="presentation"  class="active"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
             </ul>
         </div>
     </div>
-    <div class="row" id="posttitle" style="font-size: 24px">
+    <div class="row" style="margin-top: 20px;">
+        <label class="col-md-1 control-label">标题</label>
+        <div class="col-md-10">
+            <input type="text" name="posttitle" class="form-control" id="posttitle">
+            <span class="help-block"></span>
+        </div>
     </div>
     <div class="row">
-        <pre id="postbody"></pre>
+        <label class="col-md-1 control-label">内容</label>
+        <div class="col-md-10">
+            <textarea id="postbody" name="postbody" style="width: 100%;height: 400px"></textarea>
+            <span class="help-block"></span>
+        </div>
     </div>
-    <hr style="margin: 2px;"/>
-    <div class="row" style="font-size: 20px">评论</div>
-    <div class="col-md-10" id="commentsdiv"></div>
+    <label class="col-md-1 control-label">选择</label>
+    <div class="col-md-10">
+        <button type="button" class="btn btn btn-warning" id="cancelbtn">取消</button>
+        <button type="button" class="btn btn btn-success" style="margin-left: 20px" id="submitbtn">提交</button>
+    </div>
+</div>
 </div>
 <script type="text/javascript">
     var id;
     $(function () {
         id = UrlParam.paramValues("postid");
         getpost(id);
-        getcomment(id);
+        var cancelbtn = document.getElementById("cancelbtn");
+        cancelbtn.addEventListener("click", function () {
+            window.location.href = "/epubBook/views/mydomain.html";
+        }, false);
+        var submitbtn = document.getElementById("submitbtn");
+        submitbtn.addEventListener("click", function () {
+            updatepost(id);
+        }, false);
     });
-    function getcomment(id) {
+    function updatepost(id){
+        var posttitle = $("#posttitle").val();
+        var postbody = $("#postbody").val();
         $.ajax({
-            url: "/epubBook/getcomment",
-            data: "postid=" + id,
+            url: "/epubBook/updatepost",
+            data: "postid="+id+"&posttitle=" + posttitle + "&postbody=" + postbody,
             type: "POST",
             success: function (result){
-                var comments = result.extend.list;
-                var commentsdiv = $("#commentsdiv");
-                $.each(comments, function (index, item) {
-                    var rdiv = $("<div></div>").addClass("row");
-                    var coldiv1 = $("<div></div>").addClass("col-md-1");
-                    coldiv1.append(index);
-                    coldiv1.appendTo(rdiv);
-                    var coldiv2 = $("<div></div>").addClass("col-md-11");
-                    var commentbody = $("<pre></pre>").append(item.commentbody);
-                    commentbody.appendTo(coldiv2);
-                    coldiv2.appendTo(rdiv);
-                    var hr = $("<hr/>").css("margin","2px");
-                    var rrdiv = $("<div></div>").addClass("row rrdiv");
-                    rdiv.appendTo(rrdiv);
-                    hr.appendTo(rrdiv);
-                    rrdiv.appendTo(commentsdiv);
-                });
+                if (result.code == 200) {
+                    alert(result.extend.wrong);
+                    location.reload();
+                } else {
+                    window.location.href = "/epubBook/views/mypost.html";
+                }
             }
         })
     }
@@ -82,7 +89,7 @@
             data: "postid=" + id,
             type: "POST",
             success: function (result){
-                $("#posttitle").append(result.extend.post.posttitle);
+                $("#posttitle").val(result.extend.post.posttitle);
                 $("#postbody").append(result.extend.post.postbody);
             }
         })

@@ -28,4 +28,13 @@ public class PostService {
     public Post getpost(Integer id){
         return postMapper.selectByPrimaryKey(id);
     }
+    public void updatepost(Post post){
+        postMapper.updateByPrimaryKeySelective(post);
+    }
+    public void deletepost(Integer id){
+        postMapper.deleteByPrimaryKey(id);
+    }
+    public List<Post> allposts(){
+        return postMapper.selectByExample(null);
+    }
 }

@@ -101,7 +101,7 @@
   <insert id="insert" parameterType="com.bruce.bean.Post">
     insert into post (postId, postTitle, postBody, 
       postUserId)
-    values (#{postid,jdbcType=INTEGER}, #{posttitle,jdbcType=VARCHAR}, #{postbody,jdbcType=VARCHAR}, 
+    values (#{postid,jdbcType=INTEGER}, #{posttitle,jdbcType=VARCHAR}, #{postbody,jdbcType=VARCHAR},
       #{postuserid,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bruce.bean.Post">

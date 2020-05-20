@@ -39,4 +39,14 @@ public class UserService {
     public void changepw(User user){
         userMapper.updateByPrimaryKey(user);
     }
+    public List<User> allmanager(){
+        UserExample ue = new UserExample();
+        UserExample.Criteria uc = ue.createCriteria();
+        uc.andUserstatusidEqualTo(1);
+        List<User> list = userMapper.selectByExample(ue);
+        return list;
+    }
+    public void deletemanager(Integer id){
+        userMapper.deleteByPrimaryKey(id);
+    }
 }

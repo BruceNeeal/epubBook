@@ -3,6 +3,8 @@ package com.bruce.controller;
 import com.bruce.bean.Msg;
 import com.bruce.bean.User;
 import com.bruce.service.UserService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author bruce
@@ -34,6 +37,22 @@ public class UserController {
             user.setUsername(username.trim());
             user.setPassword(password.trim());
             user.setUserstatusid(2);
+            userService.addUser(user);
+            return Msg.success();
+        }
+        else return Msg.fail().add("wrong","Username has existed");
+    }
+
+    @RequestMapping(value = "/addmanager", method = RequestMethod.POST)
+    @ResponseBody
+    public Msg addmanager(@RequestParam(value = "username")String username,
+                      @RequestParam(value = "password")String password){
+        User user = userService.findUserByName(username.trim());
+        if (user==null){
+            user = new User();
+            user.setUsername(username.trim());
+            user.setPassword(password.trim());
+            user.setUserstatusid(1);
             userService.addUser(user);
             return Msg.success();
         }
@@ -107,5 +126,20 @@ public class UserController {
             userService.changepw(user);
             return Msg.success();
         }
+    }
+    @RequestMapping(value = "/allmanager",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg allmanager(@RequestParam(value = "pn", defaultValue = "1") Integer pn){
+        List<User> list = userService.allmanager();
+        PageHelper.startPage(pn, 6);
+        PageInfo page = new PageInfo(list,3);
+        return Msg.success().add("pageInfo", page);
+    }
+
+    @RequestMapping(value = "/deletemanager",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg deletemanager(@RequestParam(value = "userid") Integer userid){
+        userService.deletemanager(userid);
+        return Msg.success();
     }
 }
