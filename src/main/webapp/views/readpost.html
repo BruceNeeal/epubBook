@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>cloud read</title>
+    <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
+    <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        pre{
+            white-space:pre-wrap;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row" style="background: #c1e2b3">
+        <div class="col-md-6" style="font-size: 28px;">
+            <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
+                class="glyphicon glyphicon-book"></span>
+        </div>
+        <div class="col-md-6">
+            <ul class="nav nav-pills">
+                <li role="presentation"><a href="/epubBook/index.html">首页</a></li>
+                <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
+                <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
+                <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
+                <li role="presentation"  class="active"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" id="posttitel" style="font-size: 24px">
+    </div>
+    <div class="row">
+        <pre id="postbody"></pre>
+    </div>
+</div>
+<script type="text/javascript">
+    var id;
+    $(function () {
+        id = UrlParam.paramValues("postid");
+        getpost(id);
+    });
+    function getpost(id){
+        $.ajax({
+            url: "/epubBook/getpost",
+            data: "postid=" + id,
+            type: "POST",
+            success: function (result){
+                $("#posttitel").append(result.extend.post.posttitle);
+                $("#postbody").append(result.extend.post.postbody);
+            }
+        })
+    }
+    UrlParam = function () { // url参数
+        var data, index;
+        (function init() {
+            data = []; //值，如[["1","2"],["zhangsan"],["lisi"]]
+            index = {}; //键:索引，如{a:0,b:1,c:2}
+            var u = window.location.search.substr(1);
+            if (u != '') {
+                var params = decodeURIComponent(u).split('&');
+                for (var i = 0, len = params.length; i < len; i++) {
+                    if (params[i] != '') {
+                        var p = params[i].split("=");
+                        if (p.length == 1 || (p.length == 2 && p[1] == '')) {// p | p= | =
+                            data.push(['']);
+                            index[p[0]] = data.length - 1;
+                        } else if (typeof (p[0]) == 'undefined'
+                            || p[0] == '') { // =c 舍弃
+                            continue;
+                        } else if (typeof (index[p[0]]) == 'undefined') { // c=aaa
+                            data.push([p[1]]);
+                            index[p[0]] = data.length - 1;
+                        } else {// c=aaa
+                            data[index[p[0]]].push(p[1]);
+                        }
+                    }
+                }
+            }
+        })();
+        return {
+            // 获得参数,类似request.getParameter()
+            param: function (o) { // o: 参数名或者参数次序
+                try {
+                    return (typeof (o) == 'number' ? data[o][0]
+                        : data[index[o]][0]);
+                } catch (e) {
+                }
+            },
+            //获得参数组, 类似request.getParameterValues()
+            paramValues: function (o) { // o: 参数名或者参数次序
+                try {
+                    return (typeof (o) == 'number' ? data[o]
+                        : data[index[o]]);
+                } catch (e) {
+                }
+            },
+            //是否含有paramName参数
+            hasParam: function (paramName) {
+                return typeof (paramName) == 'string' ? typeof (index[paramName]) != 'undefined'
+                    : false;
+            },
+            // 获得参数Map ,类似request.getParameterMap()
+            paramMap: function () {
+                var map = {};
+                try {
+                    for (var p in index) {
+                        map[p] = data[index[p]];
+                    }
+                } catch (e) {
+                }
+                return map;
+            }
+        }
+    }();
+</script>
+</body>
+</html>

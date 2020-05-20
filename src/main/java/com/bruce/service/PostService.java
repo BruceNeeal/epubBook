@@ -25,4 +25,7 @@ public class PostService {
         pc.andPostuseridEqualTo(userid);
         return postMapper.selectByExample(pe);
     }
+    public Post getpost(Integer id){
+        return postMapper.selectByPrimaryKey(id);
+    }
 }

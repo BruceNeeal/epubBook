@@ -50,7 +50,7 @@ public class PostController {
         }
     }
 
-    @RequestMapping(value = "/myposts",method = RequestMethod.GET)
+    @RequestMapping(value = "/myposts",method = RequestMethod.POST)
     @ResponseBody
     public Msg myposts(@RequestParam(value = "pn", defaultValue = "1") Integer pn, HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -65,5 +65,12 @@ public class PostController {
             PageInfo page = new PageInfo(list, 3);
             return Msg.success().add("pageInfo",page);
         }
+    }
+
+    @RequestMapping(value = "/getpost",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg getpost(@RequestParam(value = "postid") Integer postid){
+        Post post = postService.getpost(postid);
+        return Msg.success().add("post",post);
     }
 }
