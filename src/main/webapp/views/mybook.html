@@ -112,7 +112,7 @@
         $.each(books, function (index, item) {
             var booksa = $("<a></a>").prop("href",
                 "/epubBook/views/readbook.html?bookid=" + item.bookid).addClass("booksa");
-            if (item.img == null) {
+            if (item.img == null||item.img.length == 0) {
                 var booksimg = $("<img>").addClass("booksimg").prop("src",
                     "/epubBook/images/imgdefault.png").appendTo(booksa);
             } else {
