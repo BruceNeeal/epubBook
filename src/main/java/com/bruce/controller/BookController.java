@@ -161,7 +161,7 @@ public class BookController {
             book.setImg(old.getImg());
         }
         bookService.updatebook(book);
-        response.sendRedirect("/epubBook/views/mydomain.html");
+        response.sendRedirect("/epubBook/views/managebook.html");
     }
 
     @RequestMapping(value = "/getbookbyid", method = RequestMethod.GET)
