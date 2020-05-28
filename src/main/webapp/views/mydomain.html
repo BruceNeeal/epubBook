@@ -23,6 +23,14 @@
         .fourdivmid:hover{
             box-shadow: 1px 1px 6px #215;
         }
+        .bookmanage{
+            background: url("../images/managebook.jpg");
+            background-size: 100%;
+        }
+        .manager{
+            background: url("../images/manager.jpg");
+            background-size: 100%;
+        }
     </style>
 </head>
 <body>
@@ -47,14 +55,14 @@
         <div class="col-md-6" style="padding-top: 20px;padding-right: 40px">
             <div class="fourdivmid" style="float: right;">
                 <a href="/epubBook/views/mybook.html" style="text-decoration: none">
-                    <div class="fourdivin">已读书籍</div>
+                    <div class="fourdivin" style="background-image: url('../images/haveread.jpg');background-size:100%">已读书籍</div>
                 </a>
             </div>
         </div>
         <div class="col-md-6" style="padding-top: 20px;padding-left: 40px">
             <div class="fourdivmid">
                 <a href="/epubBook/views/addbook.html" style="text-decoration: none">
-                    <div class="fourdivin">添加书籍</div>
+                    <div class="fourdivin" style="background-image: url('../images/addbook.jpg');background-size:100%">添加书籍</div>
                 </a>
             </div>
         </div>
@@ -63,14 +71,14 @@
         <div class="col-md-6" style="padding-top: 20px;padding-right: 40px">
             <div class="fourdivmid" style="float: right;">
                 <a href="/epubBook/views/mypost.html" style="text-decoration: none">
-                    <div class="fourdivin">我的笔记</div>
+                    <div class="fourdivin" style="background-image: url('../images/mypost.jpg');background-size:100%">我的笔记</div>
                 </a>
             </div>
         </div>
         <div class="col-md-6" style="padding-top: 20px;padding-left: 40px">
             <div class="fourdivmid">
                 <a href="/epubBook/views/addpost.html" style="text-decoration: none">
-                    <div class="fourdivin">添加笔记</div>
+                    <div class="fourdivin" style="background-image: url('../images/addpost.jpg');background-size:100%">添加笔记</div>
                 </a>
             </div>
         </div>
@@ -79,14 +87,14 @@
         <div class="col-md-6" style="padding-top: 20px;padding-right: 40px">
             <div class="fourdivmid" style="float: right;">
                 <a href="/epubBook/views/changepw.html" style="text-decoration: none">
-                    <div class="fourdivin">修改密码</div>
+                    <div class="fourdivin" style="background-image: url('../images/changepassword.jpg');background-size:100%">修改密码</div>
                 </a>
             </div>
         </div>
         <div class="col-md-6" style="padding-top: 20px;padding-left: 40px">
             <div class="fourdivmid">
                 <a href="/epubBook/views/logout.html" style="text-decoration: none">
-                    <div class="fourdivin">用户注销</div>
+                    <div class="fourdivin" style="background-image: url('../images/logout.jpg');background-size:100%">用户注销</div>
                 </a>
             </div>
         </div>
@@ -136,11 +144,11 @@
                         $("#colmd6left").addClass("col-md-6").css("padding-top", "20px").css("padding-right","40px");
                         $("#sixdivmidleft").addClass("fourdivmid").css("float", "right");
                         $("#managebook").prop("href", "/epubBook/views/managebook.html").css("text-decoration", "none");
-                        $("#sixdivinleft").addClass("fourdivin").text("书籍管理");
+                        $("#sixdivinleft").addClass("fourdivin").addClass("bookmanage").text("书籍管理");
                         $("#colmd6right").addClass("col-md-6").css("padding-top", "20px").css("padding-left","40px");
                         $("#sixdivmidright").addClass("fourdivmid");
                         $("#managepost").prop("href", "/epubBook/views/allmanager.html").css("text-decoration", "none");
-                        $("#sixdivinright").addClass("fourdivin").text("人员管理");
+                        $("#sixdivinright").addClass("fourdivin").addClass("manager").text("人员管理");
                     }
                 }
                 else {
