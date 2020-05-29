@@ -1,5 +1,7 @@
 package com.bruce.test;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 /**

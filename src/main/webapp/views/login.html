@@ -6,6 +6,7 @@
     <script type="text/javascript" src="/epubBook/static/js/jquery-3.4.1.min.js"></script>
     <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/epubBook/static/md5.js"></script>
 </head>
 <body>
 <div class="container">
@@ -51,9 +52,10 @@
     $("#submit").click(function () {
         var username = $("#username").val();
         var password = $("#password").val();
+        var encp = hex_md5(password);
         $.ajax({
             url: "/epubBook/login",
-            data: "username=" + username + "&password=" + password,
+            data: "username=" + username + "&password=" + encp,
             type: "POST",
             success: function (result) {
                 if (result.code == 200) {
