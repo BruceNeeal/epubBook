@@ -5,12 +5,10 @@ import com.bruce.bean.Post;
 import com.bruce.service.PostService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,8 +26,8 @@ public class PostController {
 
     @RequestMapping(value = "/addpost",method = RequestMethod.POST)
     @ResponseBody
-    public Msg addpost(@RequestParam(value = "posttitle") String posttitle,
-                       @RequestParam(value = "postbody") String postbody, HttpServletRequest request){
+    public Msg addpost(@RequestBody Post post, HttpServletRequest request){
+        String posttitle = post.getPosttitle();
         HttpSession session = request.getSession();
         Integer userId = null;
         userId = (Integer) session.getAttribute("userId");
@@ -40,9 +38,6 @@ public class PostController {
             if (posttitle==null||posttitle.trim().equals("")){
                 return Msg.fail().add("wrong","Please input a title!");
             }
-            Post post = new Post();
-            post.setPosttitle(posttitle);
-            post.setPostbody(postbody);
             post.setPostuserid(userId);
             postService.addpost(post);
             return Msg.success();
@@ -51,8 +46,8 @@ public class PostController {
 
     @RequestMapping(value = "/updatepost",method = RequestMethod.POST)
     @ResponseBody
-    public Msg updatepost(@RequestParam(value = "postid") Integer postid,@RequestParam(value = "posttitle") String posttitle,
-                          @RequestParam(value = "postbody") String postbody, HttpServletRequest request){
+    public Msg updatepost(@RequestBody Post post, HttpServletRequest request){
+        String posttitle = post.getPosttitle();
         HttpSession session = request.getSession();
         Integer userId = null;
         userId = (Integer) session.getAttribute("userId");
@@ -63,10 +58,6 @@ public class PostController {
             if (posttitle==null||posttitle.trim().equals("")){
                 return Msg.fail().add("wrong","Please input a title!");
             }
-            Post post = new Post();
-            post.setPostid(postid);
-            post.setPosttitle(posttitle);
-            post.setPostbody(postbody);
             post.setPostuserid(userId);
             postService.updatepost(post);
             return Msg.success();
