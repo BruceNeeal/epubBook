@@ -1,9 +1,5 @@
 package com.bruce.test;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Scanner;
-
 /**
  * @author bruce
  * @date 02-18-2020 10:43
