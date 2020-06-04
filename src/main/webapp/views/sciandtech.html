@@ -47,6 +47,9 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        #mydomain{
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -64,7 +67,7 @@
                 <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
                 <li role="presentation"><a href="/epubBook/views/frliterature.html">外国文学</a></li>
                 <li role="presentation"><a href="/epubBook/views/allposts.html">读书笔记</a></li>
-                <li role="presentation"><a href="/epubBook/views/mydomain.html">个人中心</a></li>
+                <li role="presentation"><a id="mydomain">个人中心</a></li>
             </ul>
         </div>
     </div>
@@ -83,6 +86,24 @@
     $(function() {
         to_page(1);
     });
+    $("#mydomain").click(function () {
+        checkUser();
+    });
+
+    function checkUser() {
+        $.ajax({
+            url: "/epubBook/mydomain",
+            type: "GET",
+            success: function (result) {
+                if (result.code!=100){
+                    window.location.href = "/epubBook/views/login.html";
+                }
+                else{
+                    window.location.href = "/epubBook/views/mydomain.html";
+                }
+            }
+        });
+    }
     function to_page(pn) {
         $.ajax({
             url : "/epubBook/getbookswithtype",

@@ -40,12 +40,18 @@
             <button id="prevbtn" class="btn btn-default" style="font-size: large;">
                 <span class="glyphicon glyphicon-chevron-left"></span>
             </button>
+            <button id="smallfontbtn" class="btn btn-default" style="font-size: large;">
+                <span class="glyphicon glyphicon-minus"></span>
+            </button>
         </div>
         <div id="area" style="overflow: auto;" class="col-md-10">
         </div>
         <div class="col-md-1">
             <button id="nextbtn" class="btn btn-default" style="font-size: large">
                 <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+            <button id="largefontbtn" class="btn btn-default" style="font-size: large;">
+                <span class="glyphicon glyphicon-plus"></span>
             </button>
         </div>
     </div>
@@ -56,12 +62,15 @@
     var book;
     var rendition;
     var locations=null;
+    var bookfontSize=18;
     $(function () {
         //根据id查找并渲染电子书
         id = UrlParam.paramValues("bookid");
         book = ePub("/epubBook/books/" + id + ".epub", {restore: true});
         rendition = book.renderTo("area", {flow: "auto", width: "100%", height: window.innerHeight});
         rendition.display();
+        rendition.themes.fontSize(bookfontSize+'px');//设置默认字体大小
+        //使用钩子函数生成locations对象
         book.ready.then(()=>{
             return book.locations.generate();
         }).then(result=>{
@@ -82,6 +91,20 @@
         //         alert(progress);
         //     },1)
         // });
+        var smallfontbtn = document.getElementById("smallfontbtn");
+        smallfontbtn.addEventListener("click", function () {
+            if (bookfontSize>10){
+                bookfontSize-=4;
+                rendition.themes.fontSize(bookfontSize+'px');
+            }
+        }, false);
+        var largefontbtn = document.getElementById("largefontbtn");
+        largefontbtn.addEventListener("click", function () {
+            if (bookfontSize<30){
+                bookfontSize+=4;
+                rendition.themes.fontSize(bookfontSize+'px');
+            }
+        }, false);
         var nextbtn = document.getElementById("nextbtn");
         nextbtn.addEventListener("click", function () {
             rendition.next();
