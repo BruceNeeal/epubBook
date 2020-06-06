@@ -130,8 +130,8 @@ public class UserController {
     @RequestMapping(value = "/allmanager",method = RequestMethod.POST)
     @ResponseBody
     public Msg allmanager(@RequestParam(value = "pn", defaultValue = "1") Integer pn){
+        PageHelper.startPage(pn, 9);
         List<User> list = userService.allmanager();
-        PageHelper.startPage(pn, 6);
         PageInfo page = new PageInfo(list,3);
         return Msg.success().add("pageInfo", page);
     }

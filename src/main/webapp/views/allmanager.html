@@ -9,7 +9,7 @@
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/epubBook/static/md5.js"></script>
     <style type="text/css">
-        .delete_btn{
+        .delete_btn {
             margin-left: 10px;
         }
     </style>
@@ -52,7 +52,7 @@
     </div>
 </div>
 <div class="container">
-    <div class="row" style="box-shadow: 1px 2px 3px #66b;border-radius: 2px">
+    <div class="row" style="box-shadow: 1px 2px 3px #99c;border-radius: 2px">
         <div class="col-md-6" style="font-size: 28px;">
             <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
                 class="glyphicon glyphicon-book"></span>
@@ -81,33 +81,52 @@
             </ul>
         </div>
     </div>
-    <hr style="margin: 2px;"/>
-    <div class="row">
-        <p style="font-size: large">人员管理</p>
-    </div>
-    <div class="row">
+    <div class="row" style="margin-top: 20px">
         <div class="col-md-5">
-            <table class="table table-hover" id="manager_table">
-                <thead>
-                <tr>
-                    <th>编号</th>
-                    <th>管理员账号</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div style="font-size: large">快速导航</div>
+            <div class="row" style="box-shadow: 0px 0px 5px #215;border-radius: 5px;padding: 5px;margin-top: 20px">
+                <ul class="nav nav-pills nav-stacked" style="font-size: 18px">
+                    <li role="presentation"><a href="/epubBook/views/mybook.html">已读书籍</a></li>
+                    <li role="presentation"><a href="/epubBook/views/managebook.html">书籍管理</a></li>
+                    <li role="presentation"><a href="/epubBook/views/addbook.html">添加书籍</a></li>
+                </ul>
+            </div>
+            <div class="row" style="box-shadow: 0px 0px 5px #215;border-radius: 5px;padding: 5px;margin-top: 20px">
+                <ul class="nav nav-pills nav-stacked" style="font-size: 18px">
+                    <li role="presentation"><a href="/epubBook/views/mypost.html">我的笔记</a></li>
+                    <li role="presentation"><a href="/epubBook/views/addpost.html">添加笔记</a></li>
+                    <li role="presentation"><a href="/epubBook/views/changepw.html">修改密码</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="col-md-4">
-            <button id="addmanager" class="btn btn-default">添加管理员</button>
+        <div class="col-md-6 col-md-offset-1">
+            <div class="row">
+                <div class="col-md-8" style="font-size: large">人员管理</div>
+                <div class="col-md-2">
+                    <button id="addmanager" class="btn btn-default">添加管理员</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <table class="table table-hover" id="manager_table">
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>管理员账号</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6" id="page_nav_area"></div>
+                <div class="col-md-6" id="page_info_area"
+                     style="padding: 20px; font-size: 18px;"></div>
+            </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6" id="page_nav_area"></div>
-        <div class="col-md-6" id="page_info_area"
-             style="padding: 20px; font-size: 18px;"></div>
     </div>
 
 
@@ -118,32 +137,31 @@
     $(function () {
         to_page(1);
         var addmanager = document.getElementById("addmanager");
-        addmanager.addEventListener("click",function () {
+        addmanager.addEventListener("click", function () {
             reset_form("#managerAddModal form");
             $("#managerAddModal").modal({
                 backdrop: "static"
             });
-        },false);
+        }, false);
         var submitmanager = document.getElementById("submitmanager");
-        submitmanager.addEventListener("click",function () {
+        submitmanager.addEventListener("click", function () {
             var username = $("#username").val();
             var password = $("#password").val();
             var encp = hex_md5(password);
             $.ajax({
                 url: "/epubBook/addmanager",
-                data: "username=" + username+"&password="+encp,
+                data: "username=" + username + "&password=" + encp,
                 type: "POST",
                 success: function (result) {
                     $("#managerAddModal").modal('hide');
-                    if (result.code==200){
+                    if (result.code == 200) {
                         alert(result.extend.wrong);
-                    }
-                    else {
+                    } else {
                         to_page(currentPage);
                     }
                 }
             });
-        },false)
+        }, false)
     });
 
     function to_page(pn) {
@@ -152,10 +170,9 @@
             data: "pn=" + pn,
             type: "POST",
             success: function (result) {
-                if (result.code==200){
+                if (result.code == 200) {
                     window.location.href = "/epubBook/views/login.html";
-                }
-                else {
+                } else {
                     //1.解析并显示管理员
                     build_all_managers(result);
                     //2.解析并显示分页信息
@@ -203,10 +220,9 @@
                 data: "userid=" + userid,
                 type: "POST",
                 success: function (result) {
-                    if (result.code==100){
+                    if (result.code == 100) {
                         alert("删除成功");
-                    }
-                    else alert("删除失败");
+                    } else alert("删除失败");
                     to_page(currentPage);
                 }
             });
