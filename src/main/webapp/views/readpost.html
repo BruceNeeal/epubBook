@@ -17,14 +17,55 @@
     </style>
 </head>
 <body>
+<!-- 评论添加的模态框 -->
+<div class="modal fade" id="commentAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">评论添加</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <textarea style="width: 100%;height: 200px"
+                                      id="commentbody" name="commentbody"></textarea>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="submitcomment">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="container">
-    <div class="row" style="background: #c1e2b3">
+    <div class="row" style="box-shadow: 1px 2px 3px #99c;border-radius: 2px">
         <div class="col-md-6" style="font-size: 28px;">
             <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
                 class="glyphicon glyphicon-book"></span>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" style="font-size: 18px;">
+                    友情链接 <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" style="font-size: 18px">
+                    <li><a href="http://e.dangdang.com/">当当云阅读</a></li>
+                    <li><a href="https://yuedu.163.com/">网易云阅读</a></li>
+                    <li><a href="http://epubjs.org/documentation/0.3/#epubjs">epub.js API</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="http://www.wangeditor.com/">wangEditor</a></li>
+                </ul>
+            </div>
         </div>
         <div class="col-md-6">
-            <ul class="nav nav-pills">
+            <ul class="nav nav-pills" style="margin-top: 2px;margin-bottom: 2px">
                 <li role="presentation"><a href="/epubBook/index.html">首页</a></li>
                 <li role="presentation"><a href="/epubBook/views/sciandtech.html">科学技术</a></li>
                 <li role="presentation"><a href="/epubBook/views/cnliterature.html">中国文学</a></li>
@@ -34,10 +75,17 @@
             </ul>
         </div>
     </div>
-    <div class="row" id="posttitle" style="font-size: 24px">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-11" id="posttitle" style="font-size: 24px"></div>
+        <div class="col-md-1">
+            <button class="btn btn-success btn-md comment_btn" id="commentbtn">
+                <span class="glyphicon glyphicon-pencil" style="font-size: 18px">评论</span>
+            </button>
+        </div>
     </div>
+    <hr/>
     <div class="row">
-        <pre id="postbody"></pre>
+        <p id="postbody" style="font-size: 18px"></p>
     </div>
     <hr style="margin: 2px;"/>
     <div class="row" style="font-size: 20px">评论</div>
@@ -49,6 +97,32 @@
         id = UrlParam.paramValues("postid");
         getpost(id);
         getcomment(id);
+        var submitcomment = document.getElementById("submitcomment");
+        submitcomment.addEventListener("click",function () {
+            var id = $("#submitcomment").attr("post-id");
+            var commentbody = $("#commentbody").val();
+            $.ajax({
+                url: "/epubBook/addcomment",
+                type: "POST",
+                data: "commentpostid=" + id + "&commentbody=" + commentbody,
+                success(result){
+                    $("#commentAddModal").modal('hide');
+                    if (result.code==200){
+                        alert(result.extend.wrong);
+                    }
+                    else {
+                        to_page(currentPage);
+                    }
+                }
+            })
+        },false);
+    });
+    $("#commentbtn").click(function () {
+        reset_form("#commentAddModal form");
+        $("#submitcomment").attr("post-id",id);
+        $("#commentAddModal").modal({
+            backdrop: "static"
+        });
     });
     function getcomment(id) {
         $.ajax({
@@ -86,6 +160,11 @@
                 $("#postbody").append(result.extend.post.postbody);
             }
         })
+    }
+    function reset_form(ele) {
+        $(ele)[0].reset();
+        $(ele).find("*").removeClass("has-error has-success");
+        $(ele).find(".help-block").text("");
     }
     UrlParam = function () { // url参数
         var data, index;
