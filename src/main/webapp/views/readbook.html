@@ -10,7 +10,8 @@
     <script type="text/javascript" src="/epubBook/static/getParamFromUrl.js"></script>
 </head>
 <body>
-<div class="modal fade bs-example-modal-sm" id="savemodel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade bs-example-modal-sm" id="savemodel" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -22,7 +23,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade bs-example-modal-sm" id="getmodel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade bs-example-modal-sm" id="getmodel" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -59,23 +61,23 @@
 </div>
 <script type="text/javascript">
     var id;
-    var bookpage=0;
+    var bookpage = 0;
     var book;
     var rendition;
-    var locations=null;
-    var bookfontSize=18;
+    var locations = null;
+    var bookfontSize = 18;
     $(function () {
         //根据id查找并渲染电子书
         id = UrlParam.paramValues("bookid");
         book = ePub("/epubBook/books/" + id + ".epub", {restore: true});
         rendition = book.renderTo("area", {flow: "auto", width: "100%", height: window.innerHeight});
         rendition.display();
-        rendition.themes.fontSize(bookfontSize+'px');//设置默认字体大小
+        rendition.themes.fontSize(bookfontSize + 'px');//设置默认字体大小
         //使用钩子函数生成locations对象
-        book.ready.then(()=>{
+        book.ready.then(() => {
             return book.locations.generate();
-        }).then(result=>{
-            locations=book.locations;
+        }).then(result => {
+            locations = book.locations;
         });
         getpage(id);
         var t = 0;
@@ -94,16 +96,16 @@
         // });
         var smallfontbtn = document.getElementById("smallfontbtn");
         smallfontbtn.addEventListener("click", function () {
-            if (bookfontSize>10){
-                bookfontSize-=4;
-                rendition.themes.fontSize(bookfontSize+'px');
+            if (bookfontSize > 10) {
+                bookfontSize -= 4;
+                rendition.themes.fontSize(bookfontSize + 'px');
             }
         }, false);
         var largefontbtn = document.getElementById("largefontbtn");
         largefontbtn.addEventListener("click", function () {
-            if (bookfontSize<30){
-                bookfontSize+=4;
-                rendition.themes.fontSize(bookfontSize+'px');
+            if (bookfontSize < 30) {
+                bookfontSize += 4;
+                rendition.themes.fontSize(bookfontSize + 'px');
             }
         }, false);
         var nextbtn = document.getElementById("nextbtn");
@@ -119,43 +121,43 @@
             // }
         }, false);
         var toprogress = document.getElementById("toprogress");
-        toprogress.addEventListener("click",function () {
+        toprogress.addEventListener("click", function () {
             // var i=0;
             // while(i<bookpage){
             //     rendition.next();
             //     i++;
             // }
-            var percentage = bookpage/100;
-            var cfi = percentage>0?locations.cfiFromPercentage(percentage):0;
+            var percentage = bookpage / 100;
+            var cfi = percentage > 0 ? locations.cfiFromPercentage(percentage) : 0;
             rendition.display(cfi);
             $("#getmodel").modal('hide');
-        },false);
+        }, false);
         setInterval(() => {
             var currentLocation = rendition.currentLocation();
-            var tmppage = Math.round(((locations.percentageFromCfi(currentLocation.start.cfi)).toFixed(5))*100);
-            if(tmppage>0){
-                bookpage=tmppage;
+            var tmppage = Math.round(((locations.percentageFromCfi(currentLocation.start.cfi)).toFixed(5)) * 100);
+            if (tmppage > 0) {
+                bookpage = tmppage;
             }
-            savepage(id,bookpage);
-        }, 60000)
+            savepage(id, bookpage);
+        }, 30000)
     });
 
-    function getpage(bookid){
+    function getpage(bookid) {
         $.ajax({
             url: "/epubBook/getpage",
             data: "bookid=" + bookid,
             type: "POST",
             success: function (result) {
                 if (result.code == 100) {
-                    bookpage=result.extend.page;
+                    bookpage = result.extend.page;
                     var t = 0;
-                    if (bookpage>0){
-                        setInterval(()=>{
-                            if (locations!=null&&t==0){
-                                t=1;
+                    if (bookpage > 0) {
+                        setInterval(() => {
+                            if (locations != null && t == 0) {
+                                t = 1;
                                 $("#getmodel").modal('show');
                             }
-                        },1000)
+                        }, 1000)
                     }
                 }
             }
@@ -163,8 +165,8 @@
     }
 
     function savepage(bookid, bookpage) {
-        if (bookpage<=0){
-            bookpage=0;
+        if (bookpage <= 0) {
+            bookpage = 0;
         }
         $.ajax({
             url: "/epubBook/savepage",
@@ -173,9 +175,9 @@
             success: function (result) {
                 if (result.code == 100) {
                     $("#savemodel").modal('show');
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         $("#savemodel").modal('hide');
-                    },1000)
+                    }, 1000)
                 }
             }
         });
