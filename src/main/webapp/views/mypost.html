@@ -8,7 +8,7 @@
     <link href="/epubBook/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="/epubBook/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <style type="text/css">
-        .postb{
+        .postb {
             display: block;
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -17,20 +17,24 @@
             text-overflow: ellipsis;
             max-height: 50px;
         }
+
         .postlink {
             text-decoration: none;
             color: #000;
         }
-        .postitem{
+
+        .postitem {
             margin-top: 20px;
             box-shadow: 0px 0px 3px #215;
             border-radius: 5px;
             padding: 10px;
         }
-        .postitem:hover{
+
+        .postitem:hover {
             box-shadow: 0px 1px 6px #215;
         }
-        .posttitle{
+
+        .posttitle {
             font-size: 18px;
             font-weight: bold;
             display: block;
@@ -40,10 +44,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .rightcol{
+
+        .rightcol {
             margin-top: 10px;
         }
-        .delete_btn{
+
+        .delete_btn {
             margin-left: 10px;
         }
     </style>
@@ -51,7 +57,7 @@
 
 <body>
 <div class="container">
-    <div class="row"style="box-shadow: 1px 2px 3px #99c;border-radius: 2px">
+    <div class="row" style="box-shadow: 1px 2px 3px #99c;border-radius: 2px">
         <div class="col-md-6" style="font-size: 28px;">
             <span class="glyphicon glyphicon-cloud-download"></span>Cloud Read<span
                 class="glyphicon glyphicon-book"></span>
@@ -80,10 +86,16 @@
             </ul>
         </div>
     </div>
+
     <div class="row">
-        <p style="font-size: large">我的笔记</p>
+        <div class="col-md-10 col-md-offset-1">
+            <div class="row" style="margin-top: 20px">
+                <p style="font-size: large">我的笔记</p>
+            </div>
+            <hr style="margin: 10px"/>
+            <div class="row" id="allposts"></div>
+        </div>
     </div>
-    <div class="row" id="allposts"></div>
 
     <div class="row">
         <div class="col-md-6" id="page_nav_area"></div>
@@ -104,10 +116,9 @@
             data: "pn=" + pn,
             type: "POST",
             success: function (result) {
-                if (result.code==200){
+                if (result.code == 200) {
                     window.location.href = "/epubBook/views/login.html";
-                }
-                else {
+                } else {
                     //1.解析并显示帖子
                     build_all_posts(result);
                     //2.解析并显示分页信息
@@ -137,13 +148,13 @@
                 "btn btn-primary btn-sm edit_btn").append(
                 $("<span></span>").addClass(
                     "glyphicon glyphicon-pencil")).append("编辑");
-            updatebtn.attr("edit-id",item.postid);
+            updatebtn.attr("edit-id", item.postid);
             var deletebtn = $("<button></button>").addClass(
                 "btn btn-danger btn-sm delete_btn").append(
                 $("<span></span>")
                     .addClass("glyphicon glyphicon-trash")).append(
                 "删除");
-            deletebtn.attr("del-id",item.postid);
+            deletebtn.attr("del-id", item.postid);
             updatebtn.appendTo(rightcol);
             deletebtn.appendTo(rightcol);
             var allposts = $("#allposts");
@@ -156,7 +167,7 @@
     //Jquery使用on为ajax请求刷出的编辑按钮绑定点击事件
     $(document).on("click", ".edit_btn", function () {
         var id = $(this).attr("edit-id");
-        window.location.href="/epubBook/views/updatepost.html?postid="+id;
+        window.location.href = "/epubBook/views/updatepost.html?postid=" + id;
     });
 
     //Jquery使用on为ajax请求刷出的删除按钮绑定点击事件
@@ -170,10 +181,9 @@
                 data: "postid=" + postid,
                 type: "POST",
                 success: function (result) {
-                    if (result.code==100){
+                    if (result.code == 100) {
                         alert("删除成功");
-                    }
-                    else alert("删除失败");
+                    } else alert("删除失败");
                     to_page(currentPage);
                 }
             });
