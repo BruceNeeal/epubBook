@@ -56,6 +56,7 @@
             <button id="largefontbtn" class="btn btn-default" style="font-size: large;">
                 <span class="glyphicon glyphicon-plus"></span>
             </button>
+            <button id="backindex" class="btn btn-default" style="font-size: large;margin-top: 100px">返回</button>
         </div>
     </div>
 </div>
@@ -70,10 +71,10 @@
         //根据id查找并渲染电子书
         id = UrlParam.paramValues("bookid");
         book = ePub("/epubBook/books/" + id + ".epub", {restore: true});
-        rendition = book.renderTo("area", {flow: "auto", width: "100%", height: window.innerHeight});
+        rendition = book.renderTo("area", {manager:"continuous", flow: "scrolled", width: "100%", height: window.innerHeight});
         rendition.display();
         rendition.themes.fontSize(bookfontSize + 'px');//设置默认字体大小
-        //使用钩子函数生成locations对象
+        //生成locations对象
         book.ready.then(() => {
             return book.locations.generate();
         }).then(result => {
@@ -94,6 +95,11 @@
         //         alert(progress);
         //     },1)
         // });
+        var backindex = document.getElementById("backindex");
+        backindex.addEventListener("click",function () {
+            window.location="/epubBook/";
+        },false);
+
         var smallfontbtn = document.getElementById("smallfontbtn");
         smallfontbtn.addEventListener("click", function () {
             if (bookfontSize > 10) {
